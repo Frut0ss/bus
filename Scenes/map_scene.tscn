@@ -1,3 +1,13 @@
-[gd_scene format=3 uid="uid://daxgvw001lgr1"]
+[gd_scene load_steps=3 format=3 uid="uid://daxgvw001lgr1"]
+
+[sub_resource type="Gradient" id="Gradient_m1l46"]
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_0wcw4"]
+gradient = SubResource("Gradient_m1l46")
 
 [node name="MapScene" type="Node2D"]
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(290, 286)
+scale = Vector2(8.75, 8.75)
+texture = SubResource("GradientTexture2D_0wcw4")
