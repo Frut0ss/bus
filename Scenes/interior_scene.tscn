@@ -1,3 +1,14 @@
-[gd_scene format=3 uid="uid://cyymcyw1xak1t"]
+[gd_scene load_steps=3 format=3 uid="uid://cyymcyw1xak1t"]
+
+[sub_resource type="Gradient" id="Gradient_jt8vs"]
+colors = PackedColorArray(0, 0.607843, 0.694118, 1, 1, 0.376471, 1, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_e63e4"]
+gradient = SubResource("Gradient_jt8vs")
 
 [node name="InteriorScene" type="Node2D"]
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(576.5, 332.75)
+scale = Vector2(18.1406, 10.3516)
+texture = SubResource("GradientTexture2D_e63e4")

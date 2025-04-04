@@ -1,3 +1,14 @@
-[gd_scene format=3 uid="uid://bti3t0uamplla"]
+[gd_scene load_steps=3 format=3 uid="uid://bti3t0uamplla"]
+
+[sub_resource type="Gradient" id="Gradient_u0p4k"]
+colors = PackedColorArray(0, 0.905882, 0, 1, 1, 0.2, 1, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_jt85a"]
+gradient = SubResource("Gradient_u0p4k")
 
 [node name="BusStop" type="Node2D"]
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(575, 319.5)
+scale = Vector2(18.0313, 10.0781)
+texture = SubResource("GradientTexture2D_jt85a")
