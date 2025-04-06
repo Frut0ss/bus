@@ -2,23 +2,34 @@ extends Area2D  # Or whatever node you're using
 
 var on_bus = false
 var current_bus = null
+var nearby_bus = null  # Almacena el bus cercano
 
 func _ready() -> void:
 	add_to_group("player")
+	connect("area_entered", Callable(self, "_on_area_entered"))
+	connect("area_exited", Callable(self, "_on_area_exited"))
+	
+func _on_area_entered(area):
+	if area.is_in_group("bus") and area.at_bus_stop:
+		nearby_bus = area
+		set_current_bus(area)
+
+func _on_area_exited(area):
+	if area == nearby_bus:
+		nearby_bus = null
+		set_current_bus(null)
 
 func _process(delta):
-	# Check for boarding input when near a bus
-	if not on_bus:
-		# If player presses the embark button/key while not on a bus
-		if Input.is_action_just_pressed("embark"):  # Define this action in Project Settings
-			# The actual boarding is handled by the bus's body_entered signal
-			pass
-	else:
-		# Player is on a bus, check for disembark input when bus is stopped
-		if Input.is_action_just_pressed("disembark"):  # Define this action in Project Settings
-			if current_bus and current_bus.at_bus_stop:
-				current_bus.disembark_player()
-				
+	if not on_bus and nearby_bus and nearby_bus.at_bus_stop:
+		if Input.is_action_just_pressed("embark"):
+			print("¡Subiendo al bus!")
+			set_on_bus(true)
+			current_bus.resume()
+			hide()  # O remove_child(self), si quieres quitarlo completamente
+		elif Input.is_action_just_pressed("disembark"):
+			print("Decidiste no subir al bus.")
+			current_bus.resume()
+
 func set_on_bus(status):
 	on_bus = status
 	

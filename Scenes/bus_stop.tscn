@@ -1,8 +1,8 @@
 [gd_scene load_steps=4 format=3 uid="uid://bti3t0uamplla"]
 
 [ext_resource type="Texture2D" uid="uid://r7oatlfq20aa" path="res://assets/bus_stop/1x/Background.png" id="1_jt85a"]
-[ext_resource type="Script" uid="uid://b6mt0hmrgf070" path="res://scenes/bus_stop.gd" id="1_mt65r"]
-[ext_resource type="PackedScene" uid="uid://4ngfelrrcq6c" path="res://scenes/character_player.tscn" id="2_nbpj8"]
+[ext_resource type="Script" uid="uid://b6mt0hmrgf070" path="res://Scenes/bus_stop.gd" id="1_mt65r"]
+[ext_resource type="PackedScene" uid="uid://4ngfelrrcq6c" path="res://Scenes/character_player.tscn" id="2_nbpj8"]
 
 [node name="BusStop" type="Node2D"]
 script = ExtResource("1_mt65r")
