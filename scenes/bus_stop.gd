@@ -4,6 +4,7 @@ extends Node2D
 @onready var bus_spawn_position: Marker2D = $BusSpawnPosition
 @onready var bus_despawn_position: Marker2D = $BusDespawnPosition
 @export var bus_scene = preload("res://scenes/bus.tscn")
+@onready var character_player: CharacterBody2D = $CharacterPlayer
 
 var active_buses = []
 
@@ -19,6 +20,14 @@ func _process(delta):
 	for bus in active_buses:
 		if bus != null and bus.position.x <= bus_despawn_position.position.x:
 			remove_bus(bus)
+		if bus.can_player_board() and Input.is_action_pressed("Embark"):
+			board_player(bus)
+			break
+			
+func board_player(bus):
+	var player = character_player
+	if player:
+		bus.board_player(player)
 
 func _on_bus_spawn_timer_timeout():
 	# Spawn a new bus
@@ -30,6 +39,9 @@ func spawn_bus():
 	
 	# Set its position to the spawn position
 	new_bus.position = bus_spawn_position.position
+	
+	# Pass the bus stop position to the bus
+	new_bus.set_bus_stop_position($BusStopPosition.position.x)
 	
 	# Add the bus to the scene
 	add_child(new_bus)

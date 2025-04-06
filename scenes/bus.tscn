@@ -4,10 +4,14 @@
 [ext_resource type="Texture2D" uid="uid://xnwqfwa675tb" path="res://assets/bus_stop/1x/Bus.png" id="1_t7ha2"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_stnsb"]
-size = Vector2(1222, 750.5)
+size = Vector2(300, 500.5)
 
-[node name="Bus" type="Area2D"]
+[node name="Bus" type="Area2D" groups=["bus"]]
 script = ExtResource("1_stnsb")
+speed = 1100
+stop_time = 0.8
+metadata/_edit_horizontal_guides_ = [185.0]
+metadata/_edit_vertical_guides_ = [209.0]
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 position = Vector2(2, -4)
@@ -15,5 +19,5 @@ scale = Vector2(0.86456, 0.86456)
 texture = ExtResource("1_t7ha2")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(4, -7.75)
+position = Vector2(-174, 117.25)
 shape = SubResource("RectangleShape2D_stnsb")

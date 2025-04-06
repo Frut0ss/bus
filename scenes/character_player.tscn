@@ -1,15 +1,17 @@
-[gd_scene load_steps=3 format=3 uid="uid://4ngfelrrcq6c"]
+[gd_scene load_steps=4 format=3 uid="uid://4ngfelrrcq6c"]
 
 [ext_resource type="Script" uid="uid://brkdy4x37eto1" path="res://scenes/character_player.gd" id="1_ewdyn"]
 [ext_resource type="Texture2D" uid="uid://bu1ogordqrg7c" path="res://assets/characters/1x/TouristVector.png" id="1_mibcs"]
 
-[node name="CharacterPlayer" type="Area2D" groups=["player"]]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ewdyn"]
+size = Vector2(175, 216)
+
+[node name="CharacterPlayer" type="CharacterBody2D" groups=["player"]]
 script = ExtResource("1_ewdyn")
 
-[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
-position = Vector2(-1.19209e-07, -106)
-scale = Vector2(0.517751, 0.517752)
-polygon = PackedVector2Array(40.4, -209.5, -5.8, -209.5, -20.3, -203.5, -22.7, -203.5, -41.7, -187.5, -43.9, -187.5, -94, -126.2, -94, -125.2, -116.4, -120.5, -119.8, -120.5, -131.8, -108.5, -133.5, -108.5, -140, -87.8, -140, -70, -129.3, -47.5, -128, -40.3, -128, -37.5, -121.4, -32.8, -161, 21.5, -162.4, 21.5, -164, 26.2, -164, 40.1, -161.2, 44.8, -168.8, 52.5, -169, 77.2, -159, 84.5, -159, 86.1, -153.2, 87.5, -146.5, 87.5, -140.5, 84.5, -133, 104.9, -133, 108.1, -118, 132.1, -118, 134.3, -81.6, 171.7, -99.8, 186.5, -102.4, 186.5, -101, 193.9, -101, 196.5, -97, 199.5, -97, 201.2, -67, 206.2, -67, 207.8, -56.8, 206.5, -53.3, 206.5, -46.3, 200.5, -44.4, 200.5, -41, 186.7, -41, 181.9, -39.7, 181.5, -37, 181.5, -21, 161.5, -19.1, 161.5, -10, 176.9, -10, 179.4, -1.2, 187.2, -7.7, 192.5, -10.3, 192.5, -9, 201.8, -9, 204.5, -5, 207.5, -5, 209.3, -3.5, 209.5, 45.5, 209.5, 47, 207.5, 49.3, 207.5, 48, 198.2, 48, 193.9, 71.4, 185.5, 74.6, 185.5, 90.6, 175.5, 92.8, 175.5, 103.8, 165.5, 105.9, 165.5, 128.3, 140, 134, 141.9, 134, 143.7, 148.2, 142.5, 152.7, 142.5, 157.7, 138.5, 160, 138.5, 169, 126.5, 169, 97, 165.6, 92.3, 169, 84.4, 169, 21.3, 160, -5, 160, -8.10001, 139.6, -39.7, 144, -49.1, 144, -81.7, 135.7, -116, 138, -122.1, 138, -128.8, 133, -146.5, 133, -149.4, 126, -155.4, 126, -157.5, 117.9, -157.5, 114.9, -152.6, 107, -163.2, 107, -165.3, 91, -181.3, 91, -182.6, 60, -202.7, 60, -204)
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0.5, -107)
+shape = SubResource("RectangleShape2D_ewdyn")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 position = Vector2(-1.19209e-07, -106)
