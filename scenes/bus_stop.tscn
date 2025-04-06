@@ -1,0 +1,36 @@
+[gd_scene load_steps=4 format=3 uid="uid://bti3t0uamplla"]
+
+[ext_resource type="Texture2D" uid="uid://r7oatlfq20aa" path="res://assets/bus_stop/1x/Background.png" id="1_jt85a"]
+[ext_resource type="Script" uid="uid://b6mt0hmrgf070" path="res://scenes/bus_stop.gd" id="1_mt65r"]
+[ext_resource type="PackedScene" uid="uid://4ngfelrrcq6c" path="res://scenes/character_player.tscn" id="2_nbpj8"]
+
+[node name="BusStop" type="Node2D"]
+script = ExtResource("1_mt65r")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(960.433, 529)
+scale = Vector2(0.994917, 0.77978)
+texture = ExtResource("1_jt85a")
+
+[node name="CharacterPlayer" parent="." instance=ExtResource("2_nbpj8")]
+position = Vector2(721, 894)
+
+[node name="BusSpawnPosition" type="Marker2D" parent="."]
+position = Vector2(2467, 601)
+
+[node name="BusDespawnPosition" type="Marker2D" parent="."]
+position = Vector2(-730, 612)
+
+[node name="BusStopPosition" type="Marker2D" parent="."]
+position = Vector2(954, 606)
+
+[node name="BusSpawnTimer" type="Timer" parent="."]
+wait_time = 4.0
+
+[node name="BoardingWindowTimer" type="Timer" parent="."]
+wait_time = 2.0
+one_shot = true
+autostart = true
+
+[connection signal="timeout" from="BusSpawnTimer" to="." method="_on_bus_spawn_timer_timeout"]
+[connection signal="timeout" from="BoardingWindowTimer" to="." method="_on_boarding_window_timer_timeout"]
