@@ -7,6 +7,7 @@ var stop_timer: Timer
 @export var stop_time:float = 1.0
 var player_in_range = false  # New variable to track if player is in range
 var player = CharacterBody2D
+var is_leaving = false
 
 
 func _ready():
@@ -57,6 +58,9 @@ func _process(delta):
 		if position.x <= bus_stop_position_x + 10 and position.x >= bus_stop_position_x - 10:
 			# Bus has reached the stop
 			arrive_at_stop()
+		if player != null and is_leaving and position.x < -200:  # Adjust value based on bus size
+			is_leaving = false
+			GameStateManager.change_to_state(GameStateManager.GameState.INTERIOR_BUS)
 
 func arrive_at_stop():
 	# Snap to exact position to avoid jitter
@@ -125,6 +129,10 @@ func board_player(CharacterBody2D):
 	player.position = Vector2(185, 210)  # Adjust based on your bus size
 	
 	print("Player boarded the bus")
+	
+	at_bus_stop = false
+	
+	is_leaving = true
 
 func can_player_board():
 	# Player can only board if:
