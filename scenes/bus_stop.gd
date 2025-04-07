@@ -9,8 +9,6 @@ extends Node2D
 var active_buses = []
 
 func _ready():
-	# Connect the timer's timeout signal
-	bus_spawn_timer.connect("timeout", Callable(self, "_on_bus_spawn_timer_timeout"))
 	
 	# Start the timer
 	bus_spawn_timer.start()
@@ -20,9 +18,13 @@ func _process(delta):
 	for bus in active_buses:
 		if bus != null and bus.position.x <= bus_despawn_position.position.x:
 			remove_bus(bus)
-		if bus.can_player_board() and Input.is_action_pressed("Embark"):
-			board_player(bus)
-			break
+	
+	# Only check for boarding when the key is first pressed (not held)
+	if Input.is_action_just_pressed("Embark"):  # Changed from is_action_pressed
+		for bus in active_buses:
+			if bus.can_player_board():
+				board_player(bus)
+				break
 			
 func board_player(bus):
 	var player = character_player

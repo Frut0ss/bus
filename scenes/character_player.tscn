@@ -1,10 +1,51 @@
-[gd_scene load_steps=4 format=3 uid="uid://4ngfelrrcq6c"]
+[gd_scene load_steps=8 format=3 uid="uid://4ngfelrrcq6c"]
 
 [ext_resource type="Script" uid="uid://brkdy4x37eto1" path="res://scenes/character_player.gd" id="1_ewdyn"]
 [ext_resource type="Texture2D" uid="uid://bu1ogordqrg7c" path="res://assets/characters/1x/TouristVector.png" id="1_mibcs"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ewdyn"]
 size = Vector2(175, 216)
+
+[sub_resource type="Animation" id="Animation_ewdyn"]
+resource_name = "new_animation"
+
+[sub_resource type="Animation" id="Animation_mc5b1"]
+resource_name = "boarding"
+length = 2.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.3, 0.6, 0.9, 1.2, 1.5, 1.8, 2),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [0.0, 0.174533, -0.174533, 0.174533, -0.174533, 0.174533, 0.174533, 0.0]
+}
+
+[sub_resource type="Animation" id="Animation_njumh"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_gx81s"]
+_data = {
+&"RESET": SubResource("Animation_njumh"),
+&"boarding": SubResource("Animation_mc5b1"),
+&"new_animation": SubResource("Animation_ewdyn")
+}
 
 [node name="CharacterPlayer" type="CharacterBody2D" groups=["player"]]
 script = ExtResource("1_ewdyn")
@@ -17,3 +58,10 @@ shape = SubResource("RectangleShape2D_ewdyn")
 position = Vector2(-1.19209e-07, -106)
 scale = Vector2(0.517751, 0.517752)
 texture = ExtResource("1_mibcs")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_gx81s")
+}
+
+[connection signal="animation_finished" from="AnimationPlayer" to="." method="_on_player_animation_finished"]

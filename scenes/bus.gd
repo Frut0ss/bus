@@ -8,6 +8,9 @@ var stop_timer: Timer
 var player_in_range = false  # New variable to track if player is in range
 var player = CharacterBody2D
 var is_leaving = false
+@onready var sitting_position: Marker2D = $SittingPosition
+@onready var boarding_position: Marker2D = $BoardingPosition
+@onready var animation_player: AnimationPlayer = $AnimationPlayer
 
 
 func _ready():
@@ -113,9 +116,9 @@ func display_boarding_prompt(show):
 	else:
 		print("Boarding prompt hidden")
 
-func board_player(CharacterBody2D):
+func board_player(player_node):
 	# Store reference to player
-	player = CharacterBody2D
+	player = player_node
 	
 	# Remove player from its parent
 	var player_parent = player.get_parent()
@@ -125,17 +128,38 @@ func board_player(CharacterBody2D):
 	# Add player as child of bus
 	add_child(player)
 	
+	
 	# Reset player's position relative to bus
-	player.position = Vector2(185, 210)  # Adjust based on your bus size
+	player.position = boarding_position.position
 	
-	print("Player boarded the bus")
-	
-	at_bus_stop = false
-	
-	is_leaving = true
+	var tween = create_tween()
+	# Move the player up (into the bus)
+	tween.tween_property(player, "position", Vector2(sitting_position.position.x, sitting_position.position.y), 2)
+	# Play the animation on the player's AnimationPlayer
+	if player.has_node("AnimationPlayer"):
+			var player_anim = player.get_node("AnimationPlayer")
+			
+			# Disconnect any previous connections to prevent errors
+			if player_anim.is_connected("animation_finished", Callable(self, "_on_player_animation_finished")):
+				player_anim.disconnect("animation_finished", Callable(self, "_on_player_animation_finished"))
+			
+			# Connect the signal
+			player_anim.connect("animation_finished", Callable(self, "_on_player_animation_finished"))
+			
+			# Play the animation
+			player_anim.play("boarding")
+			
+			print("Playing boarding animation on player")
+
 
 func can_player_board():
 	# Player can only board if:
 	# 1. They are in range of the bus
 	# 2. The bus is at a stop
 	return player_in_range and at_bus_stop
+
+func _on_player_animation_finished(anim_name):
+	print("Player animation finished:", anim_name)
+	# Start the bus moving again
+	at_bus_stop = false
+	is_leaving = true
