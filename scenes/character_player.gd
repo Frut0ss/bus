@@ -5,3 +5,7 @@ func _ready() -> void:
 func _process(delta):
 	pass
 	
+
+
+func _on_player_animation_finished(anim_name: StringName) -> void:
+	pass # Replace with function body.

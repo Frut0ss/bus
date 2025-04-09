@@ -32,5 +32,17 @@ wait_time = 2.0
 one_shot = true
 autostart = true
 
+[node name="StopNameLabel" type="Label" parent="."]
+offset_left = 865.0
+offset_top = 368.0
+offset_right = 983.0
+offset_bottom = 391.0
+
+[node name="NeighborhoodLabel" type="Label" parent="."]
+offset_left = 1004.0
+offset_top = 369.0
+offset_right = 1044.0
+offset_bottom = 392.0
+
 [connection signal="timeout" from="BusSpawnTimer" to="." method="_on_bus_spawn_timer_timeout"]
 [connection signal="timeout" from="BoardingWindowTimer" to="." method="_on_boarding_window_timer_timeout"]
