@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="BusStopResource" load_steps=2 format=3 uid="uid://y0n51l2gl2ah"]
+
+[ext_resource type="Script" uid="uid://dyq0mwcsvq2gc" path="res://resources/bus_stop_resource.gd" id="1_p8o5v"]
+
+[resource]
+script = ExtResource("1_p8o5v")
+id = ""
+display_name = "Test_Bus_Stop"
+position = Vector2(0, 0)
+is_landmark = false
+neighborhood = "Clontarf"
+metadata/_custom_type_script = "uid://dyq0mwcsvq2gc"

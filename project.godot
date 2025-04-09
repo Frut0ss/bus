@@ -17,8 +17,9 @@ config/icon="res://icon.svg"
 
 [autoload]
 
-SceneTransitionManager="*res://scenes/scene_transition_manager.gd"
+SceneTransitionManager="*res://singletons/scene_transition_manager.gd"
 GameStateManager="*res://singletons/GameStateManager.gd"
+TransitSystem="*res://singletons/transit_system.gd"
 
 [display]
 
