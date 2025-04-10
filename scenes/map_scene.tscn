@@ -1,9 +1,11 @@
-[gd_scene load_steps=3 format=3 uid="uid://daxgvw001lgr1"]
+[gd_scene load_steps=4 format=3 uid="uid://daxgvw001lgr1"]
 
 [ext_resource type="Texture2D" uid="uid://bygg7cyssdr4v" path="res://assets/map/1x/Background.png" id="1_0wcw4"]
+[ext_resource type="Script" uid="uid://qj61t1lp5vmm" path="res://scenes/map_scene.gd" id="1_vlip3"]
 [ext_resource type="PackedScene" uid="uid://bwxt6yk4hjcjb" path="res://scenes/map_stop.tscn" id="2_ne7uw"]
 
 [node name="MapScene" type="Node2D"]
+script = ExtResource("1_vlip3")
 
 [node name="Background" type="Sprite2D" parent="."]
 position = Vector2(960, 548)
@@ -11,3 +13,13 @@ texture = ExtResource("1_0wcw4")
 
 [node name="MapStop" parent="Background" instance=ExtResource("2_ne7uw")]
 position = Vector2(-615, -4)
+
+[node name="StopCircle_0" type="Node2D" parent="."]
+
+[node name="StopCircle_1" type="Node2D" parent="."]
+
+[node name="StopCircle_2" type="Node2D" parent="."]
+
+[node name="StopCircle_3" type="Node2D" parent="."]
+
+[node name="StopCircle_4" type="Node2D" parent="."]
