@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://cqrqpurv7hlpc"]
 
 [ext_resource type="Script" uid="uid://daeq1mg3l8kkm" path="res://scenes/bus.gd" id="1_stnsb"]
-[ext_resource type="Texture2D" uid="uid://xnwqfwa675tb" path="res://assets/bus_stop/1x/Bus.png" id="1_t7ha2"]
+[ext_resource type="Texture2D" uid="uid://qhe3oyn0yvmd" path="res://assets/bus_stop/1x/BusVector.png" id="2_stnsb"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_stnsb"]
 size = Vector2(300, 500.5)
@@ -18,9 +18,9 @@ position = Vector2(-174, 117.25)
 shape = SubResource("RectangleShape2D_stnsb")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-position = Vector2(2, -4)
-scale = Vector2(0.86456, 0.86456)
-texture = ExtResource("1_t7ha2")
+position = Vector2(93, 153)
+scale = Vector2(0.623283, 0.623283)
+texture = ExtResource("2_stnsb")
 
 [node name="BoardingPosition" type="Marker2D" parent="."]
 position = Vector2(-165, 224)
