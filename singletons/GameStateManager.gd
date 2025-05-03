@@ -12,8 +12,6 @@ var selected_map_stop_id = ""
 # Tracks if the player has boarded the bus (starts as false)
 var has_boarded_bus = false
 
-# The current index of the bus stop the player is at (starts at 0)
-var current_stop_index = 0
 
 # Preload the win scene here
 var win_scene = preload("res://scenes/win.tscn")
@@ -24,11 +22,12 @@ func _process(delta):
 	match current_state:
 		# If the player is in the MAP_VIEW (map screen)
 		GameState.MAP_VIEW:
-			if Input.is_action_just_pressed("click"):
-				# For testing: Simulate the selection of a bus stop
-				selected_map_stop_id = "test_stop"
+			if check_destination():
+				pass
+			else:
+				if Input.is_action_just_pressed("click"):
 				# Change the game state to BUS_STOP, where the player selects a bus stop
-				change_to_state(GameState.BUS_STOP)
+					change_to_state(GameState.BUS_STOP)
 
 		# If the player is at the BUS_STOP screen (choosing a bus stop)
 		GameState.BUS_STOP:
@@ -56,26 +55,29 @@ func change_to_state(new_state):
 	match new_state:
 		# When transitioning to the MAP_VIEW state
 		GameState.MAP_VIEW:
-			# Reset the current bus line to null when returning to the map view
-			TransitSystem.current_bus_line = null
-			# Transition to the "map" scene (show the map)
-			SceneTransitionManager.change_scene("map")
-
+			# Check if we've reached the destination
+			if check_destination():
+				# If we've reached the destination, the check_destination function
+				# will change the state to GAME_WON, so we don't need to do anything else
+				pass
+			else:
+				# Reset the current bus line to null when returning to the map view
+				TransitSystem.current_bus_line = null
+				# Transition to the "map" scene (show the map)
+				SceneTransitionManager.change_scene("map")
+			
 		# When transitioning to the BUS_STOP state
 		GameState.BUS_STOP:
-			if selected_map_stop_id != "":
-				# If a stop has been selected, set the current bus stop in the system
-				TransitSystem.set_current_bus_stop(selected_map_stop_id)
 			# Transition to the "bus_stop" scene (where the player selects a bus stop)
 			SceneTransitionManager.change_scene("bus_stop")
-
+			
 		# When transitioning to the INTERIOR_BUS state
 		GameState.INTERIOR_BUS:
 			# Mark that the player has boarded the bus
 			has_boarded_bus = true
 			# Transition to the "interior_bus" scene (inside the bus)
 			SceneTransitionManager.change_scene("interior_bus")
-
+			
 		# When the game is won, transition to the win screen
 		GameState.GAME_WON:
 			# Transition to the "win" scene
@@ -97,3 +99,18 @@ func show_win_screen():
 	var label = win_screen.get_node("Label")  # Ensure you have a Label node
 	if label:
 		label.text = "You Won!"  # Set the win message
+
+func check_destination():
+	# Get the current stop index from TransitSystem
+	var current_index = TransitSystem.current_stop_index
+	var destination_index = TransitSystem.destination_index
+	
+	print("Checking destination - Current index: ", current_index, ", Destination index: ", destination_index)
+	
+	# Check if we've reached the destination
+	if current_index == destination_index:
+		print("Destination reached!")
+		change_to_state(GameState.GAME_WON)
+		return true
+	
+	return false

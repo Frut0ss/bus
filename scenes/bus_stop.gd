@@ -13,13 +13,17 @@ extends Node2D
 var active_buses = []
 var current_bus_stop = null
 
+# Update the _ready function in bus_stop.gd
+
 func _ready():
-	# Connect to TransitSystem signals
-	TransitSystem.connect("bus_stop_changed", Callable(self, "_on_bus_stop_changed"))
+	# Get current bus stop from the transit system's route
+	if TransitSystem.route_stops.size() > 0:
+		current_bus_stop = TransitSystem.route_stops[TransitSystem.current_stop_index]
+	else:
+		# Fallback if no route is loaded
+		var fleet_street = TransitSystem.set_current_bus_stop("fleet_street_stop")
+		current_bus_stop = fleet_street
 	
-	# Get current bus stop data
-	#current_bus_stop = TransitSystem.get_current_bus_stop()
-	var current_bus_stop = TransitSystem.set_current_bus_stop("fleet_street")
 	update_bus_stop_display()
 	
 	# Connect the timer's timeout signal
@@ -27,7 +31,7 @@ func _ready():
 	
 	# Start the timer
 	bus_spawn_timer.start()
-
+	
 func _process(delta):
 	# Check if any buses have reached the despawn position
 	for bus in active_buses:
@@ -40,12 +44,11 @@ func _process(delta):
 func update_bus_stop_display():
 	if current_bus_stop:
 		# Update UI elements with bus stop information
-		print(current_bus_stop.properties)
 		if stop_name_label:
 			stop_name_label.text = current_bus_stop.display_name
 		
 		if neighborhood_label:
-			neighborhood_label.text = current_bus_stop.neighborhood
+			neighborhood_label.text = current_bus_stop.neighborhood.display_name
 		
 		# You could also update the background or other visual elements
 		# based on the neighborhood or other properties
@@ -69,9 +72,12 @@ func board_player(bus):
 	if player:
 		bus.board_player(player)
 		
-		# Optionally, update player state in the TransitSystem
-		# This would depend on how you track which bus line this bus belongs to
-		# TransitSystem.set_player_on_bus(bus.bus_line_id)
+		print("Advancing to next stop from: ", TransitSystem.current_stop_index)
+		var route_completed = TransitSystem.advance_to_next_stop()
+		print("Now at stop index: ", TransitSystem.current_stop_index)
+		
+		# Change state to interior bus
+		GameStateManager.change_to_state(GameStateManager.GameState.INTERIOR_BUS)
 
 func _on_bus_spawn_timer_timeout():
 	# Spawn a new bus

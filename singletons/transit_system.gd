@@ -6,6 +6,11 @@ var current_player_position = null
 var current_bus_line = null
 var current_bus_stop = null
 
+# Bus route
+var route_stops = []  # Array of bus stop resources in sequence
+var current_stop_index = 0  # Current position in the route
+var destination_index = 0   # Final destination index
+
 # Resource collections
 var bus_stops = {}
 var bus_lines = {}
@@ -14,12 +19,48 @@ var bus_line_variants = {}
 # Signal when the current bus stop changes
 signal bus_stop_changed(new_stop)
 
-# Initialize with a test bus stop (for development)
+# Called when the node enters the scene tree
 func _ready():
-	pass
+	# We'll implement load_route_stops in a future step
+	load_test_route()
+
+
+func load_test_route():
+	# Clear existing route
+	route_stops.clear()
+	
+	# Load stops
+	var fleet_stop = load_bus_stop("fleet_street")
+	var temple_stop = load_bus_stop("temple_lane")
+	var meeting_stop = load_bus_stop("meeting_house_square")
+	var dame_stop = load_bus_stop("dame_street")
+	
+	# Add them to the route in order
+	if fleet_stop:
+		route_stops.append(fleet_stop)
+	if temple_stop:
+		route_stops.append(temple_stop)
+	if meeting_stop:
+		route_stops.append(meeting_stop)
+	if dame_stop:
+		route_stops.append(dame_stop)
+	
+	# Set destination to the last stop
+	destination_index = route_stops.size() - 1
+	
+	# Set current stop to the first one
+	if route_stops.size() > 0:
+		current_bus_stop = route_stops[0]
+		current_stop_index = 0
+	
+	print("Loaded test route with ", route_stops.size(), " stops")
+	for i in range(route_stops.size()):
+		print("Stop ", i, ": ", route_stops[i].display_name)
+
+
 # Load a bus stop by ID
 func load_bus_stop(stop_id):
-	var path = "res://resources/bus_stops/" + stop_id + ".tres"
+	var path = "res://resources/bus_stops/" + stop_id + "_stop.tres"
 	if ResourceLoader.exists(path):
 		var stop = load(path)
 		bus_stops[stop_id] = stop
@@ -37,8 +78,8 @@ func set_current_bus_stop(stop_id):
 	
 	if current_bus_stop:
 		emit_signal("bus_stop_changed", current_bus_stop)
-		return true
-	return false
+		return current_bus_stop
+	return null
 
 # Get current bus stop details
 func get_current_bus_stop():
@@ -49,3 +90,22 @@ func get_current_bus_stop_lines():
 	if current_bus_stop:
 		return current_bus_stop.connected_lines
 	return []
+
+func advance_to_next_stop():
+	current_stop_index += 1
+	print("Advanced to stop index: ", current_stop_index)
+	
+	# Safety check to avoid index out of bounds
+	if route_stops.size() > 0 and current_stop_index < route_stops.size():
+		current_bus_stop = route_stops[current_stop_index]
+		print("New stop: ", current_bus_stop.display_name if current_bus_stop else "None")
+		emit_signal("bus_stop_changed", current_bus_stop)
+		return false  # Not at the end yet
+	
+	return true  # We're at the end
+
+# Get the name of the current stop
+func get_current_stop_name():
+	if current_bus_stop and current_bus_stop.has("display_name"):
+		return current_bus_stop.display_name
+	return "Unknown Stop"
