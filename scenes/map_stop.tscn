@@ -1,8 +1,14 @@
-[gd_scene load_steps=2 format=3 uid="uid://bwxt6yk4hjcjb"]
+[gd_scene load_steps=3 format=3 uid="uid://bwxt6yk4hjcjb"]
 
+[ext_resource type="Script" uid="uid://b5np1h33eqe5d" path="res://scenes/map_stop.gd" id="1_5vos2"]
 [ext_resource type="Texture2D" uid="uid://bnnl56jld73nx" path="res://assets/map/1x/Fichier 6.png" id="1_irc1t"]
 
 [node name="MapStop" type="Node2D"]
+script = ExtResource("1_5vos2")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = ExtResource("1_irc1t")
+
+[node name="Label" type="Label" parent="."]
+offset_right = 40.0
+offset_bottom = 23.0
