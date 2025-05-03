@@ -19,7 +19,7 @@ func _ready():
 	
 	# Get current bus stop data
 	#current_bus_stop = TransitSystem.get_current_bus_stop()
-	var current_bus_stop = TransitSystem.set_current_bus_stop("test_bus_stop")
+	var current_bus_stop = TransitSystem.set_current_bus_stop("fleet_street")
 	update_bus_stop_display()
 	
 	# Connect the timer's timeout signal
@@ -40,6 +40,7 @@ func _process(delta):
 func update_bus_stop_display():
 	if current_bus_stop:
 		# Update UI elements with bus stop information
+		print(current_bus_stop.properties)
 		if stop_name_label:
 			stop_name_label.text = current_bus_stop.display_name
 		
