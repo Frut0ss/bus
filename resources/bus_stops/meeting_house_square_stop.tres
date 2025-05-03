@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="BusStopResource" load_steps=2 format=3 uid="uid://dc2ni4cs2n1xn"]
+
+[ext_resource type="Script" uid="uid://dyq0mwcsvq2gc" path="res://resources/bus_stops/bus_stop_resource.gd" id="1_pek2h"]
+
+[resource]
+script = ExtResource("1_pek2h")
+id = ""
+display_name = "Meeting House Square"
+position = Vector2(0, 0)
+is_landmark = false
+metadata/_custom_type_script = "uid://dyq0mwcsvq2gc"
