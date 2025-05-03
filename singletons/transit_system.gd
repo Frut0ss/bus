@@ -16,9 +16,7 @@ signal bus_stop_changed(new_stop)
 
 # Initialize with a test bus stop (for development)
 func _ready():
-	# You might want to load a default/test bus stop here
-	load_test_resources()
-
+	pass
 # Load a bus stop by ID
 func load_bus_stop(stop_id):
 	var path = "res://resources/bus_stops/" + stop_id + ".tres"
@@ -51,19 +49,3 @@ func get_current_bus_stop_lines():
 	if current_bus_stop:
 		return current_bus_stop.connected_lines
 	return []
-
-# Load some test resources for development
-func load_test_resources():
-	# Create a test bus stop if it doesn't exist
-	var test_stop = BusStopResource.new()
-	test_stop.id = "test_stop"
-	test_stop.display_name = "Test Bus Stop"
-	test_stop.position = Vector2(500, 300)
-	test_stop.is_landmark = true
-	test_stop.neighborhood = "downtown"
-	
-	# Save to bus_stops dictionary
-	bus_stops[test_stop.id] = test_stop
-	
-	# Set as current
-	current_bus_stop = test_stop

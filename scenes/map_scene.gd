@@ -14,7 +14,7 @@ var current_stop_index = 0  # Current stop index the player is at
 var is_animating = false  # Whether the animation is in progress
 
 # Reference to the player marker node, ensure 'MapStop' is correctly assigned
-@onready var player_marker := $Background/MapStop  
+@onready var player_marker := $Background/TempleBar
 
 var route_lines = []  # List to store route lines
 

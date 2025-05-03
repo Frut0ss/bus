@@ -11,12 +11,6 @@ extends Resource
 # so we'll store them internally
 var connected_lines = []
 
-func _init(p_id = "", p_display_name = "", p_position = Vector2.ZERO, p_is_landmark = false, p_neighborhood = ""):
-	id = p_id
-	display_name = p_display_name
-	position = p_position
-	is_landmark = p_is_landmark
-	neighborhood = p_neighborhood
 
 func add_line(line_resource):
 	if not line_resource in connected_lines:
