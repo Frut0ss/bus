@@ -1,8 +1,7 @@
-# game_state_manager.gd
 extends Node
 
 # Define game states as an enum for clarity and structure
-enum GameState { MAP_VIEW, BUS_STOP, INTERIOR_BUS }
+enum GameState { MAP_VIEW, BUS_STOP, INTERIOR_BUS, GAME_WON }
 
 # The current game state, initialized to MAP_VIEW (when the player is on the map)
 var current_state = GameState.MAP_VIEW
@@ -15,6 +14,9 @@ var has_boarded_bus = false
 
 # The current index of the bus stop the player is at (starts at 0)
 var current_stop_index = 0
+
+# Preload the win scene here
+var win_scene = preload("res://scenes/win.tscn")
 
 # The process function is called every frame
 func _process(delta):
@@ -39,6 +41,11 @@ func _process(delta):
 			if Input.is_action_just_pressed("click"):
 				# If the player clicks, go back to the map screen
 				change_to_state(GameState.MAP_VIEW)
+
+		# Handle GAME_WON state (after the game is won)
+		GameState.GAME_WON:
+			# When the game is won, show the win screen
+			show_win_screen()
 
 # Function to change the game state and handle scene transitions
 func change_to_state(new_state):
@@ -68,3 +75,25 @@ func change_to_state(new_state):
 			has_boarded_bus = true
 			# Transition to the "interior_bus" scene (inside the bus)
 			SceneTransitionManager.change_scene("interior_bus")
+
+		# When the game is won, transition to the win screen
+		GameState.GAME_WON:
+			# Transition to the "win" scene
+			SceneTransitionManager.change_scene("win")
+
+# Function to handle showing the win screen
+func show_win_screen():
+	# Ensure the win scene is loaded and instantiated when the game is won
+	var win_screen = win_scene.instantiate()
+
+	# Get the current scene and add the win screen to it
+	var current_scene = get_tree().current_scene
+	if current_scene:
+		current_scene.add_child(win_screen)
+	else:
+		get_tree().root.add_child(win_screen)
+
+	# Optionally, set the text of the win message
+	var label = win_screen.get_node("Label")  # Ensure you have a Label node
+	if label:
+		label.text = "You Won!"  # Set the win message
