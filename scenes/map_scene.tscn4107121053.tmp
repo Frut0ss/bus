@@ -1,0 +1,34 @@
+[gd_scene load_steps=8 format=3 uid="uid://daxgvw001lgr1"]
+
+[ext_resource type="Texture2D" uid="uid://bygg7cyssdr4v" path="res://assets/map/1x/Background.png" id="1_0wcw4"]
+[ext_resource type="Script" uid="uid://qj61t1lp5vmm" path="res://scenes/map_scene.gd" id="1_vlip3"]
+[ext_resource type="PackedScene" uid="uid://bwxt6yk4hjcjb" path="res://scenes/map_stop.tscn" id="2_ne7uw"]
+[ext_resource type="Resource" uid="uid://cb8yid74i47dl" path="res://resources/bus_stops/temple_lane_stop.tres" id="2_vsh3c"]
+[ext_resource type="Resource" uid="uid://dxi8net2mif1c" path="res://resources/bus_stops/fleet_street_stop.tres" id="3_jlqwp"]
+[ext_resource type="Resource" uid="uid://dc2ni4cs2n1xn" path="res://resources/bus_stops/meeting_house_square_stop.tres" id="4_wwgyy"]
+[ext_resource type="Resource" uid="uid://b7bxli8tegtc2" path="res://resources/bus_stops/dame_street_stop.tres" id="5_5gqha"]
+
+[node name="MapScene" type="Node2D"]
+script = ExtResource("1_vlip3")
+fleet_stop = ExtResource("3_jlqwp")
+temple_bar_stop = ExtResource("2_vsh3c")
+meeting_house_stop = ExtResource("4_wwgyy")
+dame_street_stop = ExtResource("5_5gqha")
+
+[node name="Background" type="Sprite2D" parent="."]
+position = Vector2(960, 548)
+texture = ExtResource("1_0wcw4")
+
+[node name="PlayerMarker" type="Node2D" parent="Background"]
+
+[node name="Fleet" parent="Background" instance=ExtResource("2_ne7uw")]
+position = Vector2(-110, -329)
+
+[node name="TempleBar" parent="Background" instance=ExtResource("2_ne7uw")]
+position = Vector2(263, -253)
+
+[node name="Meetinghouse" parent="Background" instance=ExtResource("2_ne7uw")]
+position = Vector2(-555, -51)
+
+[node name="Damestreet" parent="Background" instance=ExtResource("2_ne7uw")]
+position = Vector2(-187, 82)

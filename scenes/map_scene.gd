@@ -35,15 +35,20 @@ func _ready():
 		dame_street.global_position
 	]
 
-	# Set initial player marker position
-	current_stop_index = GameStateManager.current_stop_index if GameStateManager.current_stop_index < stops.size() else 0
-	player_marker.global_position = stops[current_stop_index]
+	# Set player marker to current stop from TransitSystem
+	var current_stop_index = TransitSystem.current_stop_index
+	if current_stop_index < stops.size():
+		player_marker.global_position = stops[current_stop_index]
+	else:
+		# Fallback to first stop
+		player_marker.global_position = stops[0]
 
 	# Draw full route
 	draw_route_line(stops)
-
-	if GameStateManager.has_boarded_bus:
-		move_to_next_stop()
+	
+	#move_to_next_stop()
+	
+	draw_journey_progress(current_stop_index)
 
 func draw_route_line(stop_positions: Array):
 	var line = Line2D.new()
@@ -55,47 +60,39 @@ func draw_route_line(stop_positions: Array):
 	for pos in stop_positions:
 		line.add_point(pos)
 
-# Update your move_to_next_stop function
-func move_to_next_stop():
-	if current_stop_index < stops.size() - 1 and not is_animating:
-		is_animating = true
-
-		var start = stops[current_stop_index]
-		current_stop_index += 1  # Increase the stop index
-		var target = stops[current_stop_index]
-
-		var journey_line = Line2D.new()
-		journey_line.default_color = Color(1, 0, 0)  # Red color for journey
-		journey_line.width = 8.0
-		journey_line.z_index = 15
-		add_child(journey_line)
-		journey_line.add_point(start)
-
-		var tween = create_tween().set_parallel(true)
-		var duration = 2.0
-		tween.tween_property(player_marker, "global_position", target, duration)
-
-		var steps = 20
-		for i in range(1, steps + 1):
-			var t = float(i) / steps
-			var inter = start.lerp(target, t)
-			tween.tween_callback(func():
-				journey_line.add_point(inter)
-			).set_delay(t * duration)
-
-		tween.tween_callback(func():
-			is_animating = false
-			GameStateManager.current_stop_index = current_stop_index
-
-			# Debugging line to check if we reached the last stop
-			print("Current Stop Index: ", current_stop_index, " Last Stop Index: ", stops.size() - 1)
-
-			# Check if we reached the 4th stop (index 3 in 0-based index)
-			if current_stop_index == stops.size() - 1:
-				# Change to GAME_WON state in the GameStateManager
-				GameStateManager.change_to_state(GameStateManager.GameState.GAME_WON)  # Corrected reference
-		)
-
-func _input(event):
-	if event is InputEventKey and event.pressed and event.keycode == KEY_SPACE:
-		move_to_next_stop()
+func draw_journey_progress(current_index):
+	# Create the line object
+	var journey_line = Line2D.new()
+	journey_line.default_color = Color(1, 0, 0)  # Red color for journey
+	journey_line.width = 8.0
+	journey_line.z_index = 15
+	add_child(journey_line)
+	
+	# If we're only at the first stop, just add that point
+	if current_index == 0:
+		journey_line.add_point(stops[0])
+		return
+	
+	# Add only the first point initially
+	journey_line.add_point(stops[0])
+	
+	# Create a tween for animation
+	var tween = create_tween()
+	var duration = 0.75  # Total animation duration in seconds
+	
+	# Calculate delay between adding each point
+	var delay_per_point = duration / current_index
+	
+	# Animate adding each subsequent point
+	for i in range(1, current_index + 1):
+		if i < stops.size():
+			# Create a closure to capture the current index
+			var add_point_func = func():
+				journey_line.add_point(stops[i])
+			
+			# Add the point after a delay
+			tween.tween_callback(add_point_func).set_delay(delay_per_point)
+#
+#func _input(event):
+	#if event is InputEventKey and event.pressed and event.keycode == KEY_SPACE:
+		#move_to_next_stop()
