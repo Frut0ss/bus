@@ -11,8 +11,11 @@ script = ExtResource("1_vlip3")
 position = Vector2(960, 548)
 texture = ExtResource("1_0wcw4")
 
-[node name="MapStop" parent="Background" instance=ExtResource("2_ne7uw")]
-position = Vector2(-615, -4)
+[node name="MapStop2" parent="Background" instance=ExtResource("2_ne7uw")]
+position = Vector2(-328, -316)
+
+[node name="TempleBar" parent="Background" instance=ExtResource("2_ne7uw")]
+position = Vector2(-333, -51)
 
 [node name="StopCircle_0" type="Node2D" parent="."]
 

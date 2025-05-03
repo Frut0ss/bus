@@ -5,7 +5,7 @@ extends Resource
 @export var display_name: String
 @export var position: Vector2
 @export var is_landmark: bool = false
-@export var neighborhood: String
+@export var neighborhood: NeighborhoodResource
 
 # We can't directly export arrays of custom resources in Godot,
 # so we'll store them internally

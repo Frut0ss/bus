@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="BusStopResource" load_steps=2 format=3 uid="uid://b7bxli8tegtc2"]
+
+[ext_resource type="Script" uid="uid://dyq0mwcsvq2gc" path="res://resources/bus_stops/bus_stop_resource.gd" id="1_xxcac"]
+
+[resource]
+script = ExtResource("1_xxcac")
+id = ""
+display_name = "Dame Street"
+position = Vector2(0, 0)
+is_landmark = false
+metadata/_custom_type_script = "uid://dyq0mwcsvq2gc"
