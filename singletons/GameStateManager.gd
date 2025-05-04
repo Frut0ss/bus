@@ -105,8 +105,6 @@ func check_destination():
 	var current_index = TransitSystem.current_stop_index
 	var destination_index = TransitSystem.destination_index
 	
-	print("Checking destination - Current index: ", current_index, ", Destination index: ", destination_index)
-	
 	# Check if we've reached the destination
 	if current_index == destination_index:
 		print("Destination reached!")

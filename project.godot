@@ -30,6 +30,7 @@ window/size/viewport_height=1080
 
 player=""
 bus=""
+bus_stops=""
 
 [input]
 

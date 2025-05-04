@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://cyymcyw1xak1t"]
+[gd_scene load_steps=10 format=3 uid="uid://cyymcyw1xak1t"]
 
 [ext_resource type="Texture2D" uid="uid://c82lkv8gnwmap" path="res://assets/bus_interior/BusInterior.png" id="1_e63e4"]
 [ext_resource type="Script" uid="uid://c5m1a1bnl5ktb" path="res://scenes/interior_scene.gd" id="1_mnpsb"]
@@ -7,6 +7,48 @@
 [ext_resource type="Texture2D" uid="uid://cmpk8y4mbgr0n" path="res://assets/bus_interior/BackPlan.png" id="3_12ok6"]
 [ext_resource type="Texture2D" uid="uid://cjmx04hofkq3q" path="res://assets/bus_interior/MiddlePlan.png" id="4_mnpsb"]
 [ext_resource type="Texture2D" uid="uid://coqx4hmln6ifb" path="res://assets/bus_interior/FirstPlan.png" id="5_s2p38"]
+
+[sub_resource type="FontFile" id="FontFile_s2p38"]
+cache/0/1/0/ascent = 0.0
+cache/0/1/0/descent = 0.0
+cache/0/1/0/underline_position = 0.0
+cache/0/1/0/underline_thickness = 0.0
+cache/0/1/0/scale = 1.0
+cache/0/16/0/ascent = 0.0
+cache/0/16/0/descent = 0.0
+cache/0/16/0/underline_position = 0.0
+cache/0/16/0/underline_thickness = 0.0
+cache/0/16/0/scale = 1.0
+cache/0/40/0/ascent = 0.0
+cache/0/40/0/descent = 0.0
+cache/0/40/0/underline_position = 0.0
+cache/0/40/0/underline_thickness = 0.0
+cache/0/40/0/scale = 1.0
+cache/0/15/0/ascent = 0.0
+cache/0/15/0/descent = 0.0
+cache/0/15/0/underline_position = 0.0
+cache/0/15/0/underline_thickness = 0.0
+cache/0/15/0/scale = 1.0
+cache/0/5/0/ascent = 0.0
+cache/0/5/0/descent = 0.0
+cache/0/5/0/underline_position = 0.0
+cache/0/5/0/underline_thickness = 0.0
+cache/0/5/0/scale = 1.0
+cache/0/80/0/ascent = 0.0
+cache/0/80/0/descent = 0.0
+cache/0/80/0/underline_position = 0.0
+cache/0/80/0/underline_thickness = 0.0
+cache/0/80/0/scale = 1.0
+cache/0/60/0/ascent = 0.0
+cache/0/60/0/descent = 0.0
+cache/0/60/0/underline_position = 0.0
+cache/0/60/0/underline_thickness = 0.0
+cache/0/60/0/scale = 1.0
+
+[sub_resource type="LabelSettings" id="LabelSettings_kjyc6"]
+font = SubResource("FontFile_s2p38")
+font_size = 60
+font_color = Color(0, 0, 0, 1)
 
 [node name="InteriorScene" type="Node2D"]
 script = ExtResource("1_mnpsb")
@@ -56,3 +98,10 @@ texture = ExtResource("1_e63e4")
 
 [node name="CharacterPlayer" parent="." instance=ExtResource("2_wpy3y")]
 position = Vector2(1025, 871)
+
+[node name="NextStopLabel" type="Label" parent="."]
+offset_left = 625.0
+offset_top = 21.0
+offset_right = 1286.0
+offset_bottom = 109.0
+label_settings = SubResource("LabelSettings_kjyc6")
