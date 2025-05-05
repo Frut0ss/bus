@@ -5,7 +5,7 @@
 
 [resource]
 script = ExtResource("1_mvevi")
-id = ""
+id = "temple_lane"
 display_name = "Temple Lane"
 position = Vector2(0, 0)
 is_landmark = false

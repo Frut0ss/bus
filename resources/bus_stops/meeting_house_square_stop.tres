@@ -5,7 +5,7 @@
 
 [resource]
 script = ExtResource("1_pek2h")
-id = ""
+id = "meeting_house_square"
 display_name = "Meeting House Square"
 position = Vector2(0, 0)
 is_landmark = false

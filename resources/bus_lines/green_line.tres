@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="BusLineResource" load_steps=6 format=3 uid="uid://cfjeuojec64xe"]
+
+[ext_resource type="Script" uid="uid://cqlhj722788w0" path="res://resources/bus_lines/bus_line_resource.gd" id="1_acm6b"]
+[ext_resource type="Script" uid="uid://dyq0mwcsvq2gc" path="res://resources/bus_stops/bus_stop_resource.gd" id="2_t78o5"]
+[ext_resource type="Resource" uid="uid://b7bxli8tegtc2" path="res://resources/bus_stops/dame_street_stop.tres" id="3_05f2o"]
+[ext_resource type="Resource" uid="uid://dc2ni4cs2n1xn" path="res://resources/bus_stops/meeting_house_square_stop.tres" id="4_3q4gn"]
+[ext_resource type="Resource" uid="uid://dxi8net2mif1c" path="res://resources/bus_stops/fleet_street_stop.tres" id="5_ttxjf"]
+
+[resource]
+script = ExtResource("1_acm6b")
+id = "green_line"
+display_name = "Green Line"
+color = Color(0, 1, 0, 1)
+stops = Array[ExtResource("2_t78o5")]([ExtResource("3_05f2o"), ExtResource("4_3q4gn"), ExtResource("5_ttxjf")])
+frequency = 5.0
+travel_time_between_stops = 2.0
+variants = []
+metadata/_custom_type_script = "uid://cqlhj722788w0"

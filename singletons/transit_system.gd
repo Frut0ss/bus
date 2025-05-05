@@ -23,7 +23,13 @@ signal bus_stop_changed(new_stop)
 func _ready():
 	# We'll implement load_route_stops in a future step
 	load_test_route()
-
+	# Load bus lines 
+	load_all_bus_lines()
+	connect_lines_to_stops()
+	# Print debug information
+	print("TransitSystem initialized with:")
+	print("- " + str(bus_stops.size()) + " bus stops")
+	print("- " + str(bus_lines.size()) + " bus lines")
 
 func load_test_route():
 	# Clear existing route
@@ -57,6 +63,53 @@ func load_test_route():
 	for i in range(route_stops.size()):
 		print("Stop ", i, ": ", route_stops[i].display_name)
 
+
+# Add this function to TransitSystem.gd
+func load_all_bus_lines():
+	var line_ids = ["red_line", "blue_line", "green_line"]
+	
+	for line_id in line_ids:
+		load_bus_line(line_id)
+	
+	print("Loaded " + str(bus_lines.size()) + " bus lines")
+	return bus_lines
+
+# Load a bus line by ID
+func load_bus_line(line_id):
+	var path = "res://resources/bus_lines/" + line_id + ".tres"
+	if ResourceLoader.exists(path):
+		print("Loading bus line from: " + path)
+		
+		# Try to load with ResourceLoader with a specific type hint
+		var line = ResourceLoader.load(path, "Resource")
+		
+		if line:
+			print("Successfully loaded line: " + line_id)
+			bus_lines[line_id] = line
+			
+			# Only try to access stops if the stops property exists
+			if line.stops :
+				var stop_names = []
+				for stop in line.stops:
+					if stop:
+						stop_names.append(stop.display_name)
+				print(line.display_name + " stops: " + str(stop_names))
+			else:
+				print("WARNING: " + line_id + " has no stops or stops is null")
+			
+			return line
+			
+func connect_lines_to_stops():
+	print("Connecting bus lines to stops...")
+	
+	# For each bus line, connect it to its stops
+	for line_id in bus_lines:
+		var line = bus_lines[line_id]
+		
+		# For each stop in the line, add the line to the stop's connected_lines
+		for stop in line.stops:
+			stop.add_line(line)
+			print("Connected " + line.display_name + " to " + stop.display_name)
 
 # Load a bus stop by ID
 func load_bus_stop(stop_id):
