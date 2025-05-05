@@ -27,3 +27,9 @@ position = Vector2(-165, 224)
 
 [node name="SittingPosition" type="Marker2D" parent="."]
 position = Vector2(207, 187)
+
+[node name="LineLabel" type="Label" parent="."]
+offset_left = -321.0
+offset_top = -3.0
+offset_right = -168.0
+offset_bottom = 245.0

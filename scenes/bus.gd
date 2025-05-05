@@ -12,6 +12,9 @@ var is_leaving = false
 @onready var boarding_position: Marker2D = $BoardingPosition
 @onready var animation_player: AnimationPlayer = $AnimationPlayer
 
+@onready var line_label: Label = $LineLabel
+
+var bus_line = null
 
 func _ready():
 	# Create the timer programmatically
@@ -115,6 +118,10 @@ func display_boarding_prompt(show):
 		print("Press E to board the bus")
 	else:
 		print("Boarding prompt hidden")
+		
+func display_bus_line(line_name):
+	print("Attempting to display line name: " + line_name)
+	line_label.text = line_name
 
 func board_player(player_node):
 	# Store reference to player

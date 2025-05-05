@@ -72,6 +72,11 @@ func board_player(bus):
 	if player:
 		bus.board_player(player)
 		
+		# Store the bus line in TransitSystem
+		TransitSystem.current_bus_line = bus.bus_line
+		if bus.bus_line:
+			print("Player boarded " + bus.bus_line.display_name)
+		
 		print("Advancing to next stop from: ", TransitSystem.current_stop_index)
 		var route_completed = TransitSystem.advance_to_next_stop()
 		print("Now at stop index: ", TransitSystem.current_stop_index)
@@ -84,31 +89,42 @@ func _on_bus_spawn_timer_timeout():
 	spawn_bus()
 
 func spawn_bus():
-	# Instance the bus scene
-	var new_bus = bus_scene.instantiate()
-	
-	# Set its position to the spawn position
-	new_bus.position = bus_spawn_position.position
-	
-	# Pass the bus stop position to the bus
-	new_bus.set_bus_stop_position($BusStopPosition.position.x)
-	
-	# If we have bus lines connected to this stop, we could
-	# randomly select one and apply its properties to the bus
+	# If we have bus lines connected to this stop, spawn a random one
 	if current_bus_stop and not current_bus_stop.connected_lines.is_empty():
+		# Get a random bus line from the available ones
 		var random_index = randi() % current_bus_stop.connected_lines.size()
 		var bus_line = current_bus_stop.connected_lines[random_index]
 		
-		# Apply bus line properties to the bus
-		# new_bus.set_bus_line(bus_line)
-		# This would require adding this method to your bus.gd script
-	
-	# Add the bus to the scene
-	add_child(new_bus)
-	
-	# Add to our active buses array for tracking
-	active_buses.append(new_bus)
-
+		print("Selected random bus line: " + bus_line.display_name)
+		
+		# Create the bus
+		var new_bus = bus_scene.instantiate()
+		
+		# Set bus position
+		new_bus.position = bus_spawn_position.position
+		
+		# Pass the bus stop position to the bus
+		new_bus.set_bus_stop_position($BusStopPosition.position.x)
+		
+		# Set the bus color to match the line
+		new_bus.modulate = bus_line.color
+		
+		# Store the bus line on the bus for reference
+		new_bus.bus_line = bus_line
+		
+		# Add the bus to the scene
+		add_child(new_bus)
+		
+		# Display the bus line name
+		new_bus.display_bus_line(bus_line.display_name)
+		
+		# Add to our active buses array for tracking
+		active_buses.append(new_bus)
+		
+		print("Spawned bus for line: " + bus_line.display_name)
+	else:
+		print("No bus lines available at this stop!")
+		
 func remove_bus(bus):
 	# Remove from active buses array
 	if bus in active_buses:
