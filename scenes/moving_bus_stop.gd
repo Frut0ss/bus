@@ -33,7 +33,6 @@ func _on_body_entered(body):
 		player_in_range = true
 		# Visual feedback that player can disembark here
 		modulate = Color(1.2, 1.2, 0.8)  # Slightly highlight the stop
-		print("Player can disembark at: " + stop_resource.display_name)
 
 func _on_body_exited(body):
 	if body.is_in_group("player"):

@@ -10,4 +10,6 @@ display_name = "Meeting House Square"
 position = Vector2(0, 0)
 is_landmark = false
 neighborhood = ExtResource("1_7cy31")
+is_starting_point = false
+is_destination_point = false
 metadata/_custom_type_script = "uid://dyq0mwcsvq2gc"

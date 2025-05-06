@@ -12,7 +12,6 @@ extends Node2D
 @onready var player_marker := $Background/PlayerMarker
 
 var is_animating := false
-var current_stop_index := 0
 var stops := []
 var win_scene = preload("res://scenes/win.tscn")
 
@@ -54,7 +53,7 @@ func draw_route_line(stop_positions: Array):
 	var line = Line2D.new()
 	line.default_color = Color(0.0, 0.45, 0.85)
 	line.width = 6.0
-	line.z_index = 10
+	line.z_index = 1
 	add_child(line)
 
 	for pos in stop_positions:
