@@ -6,7 +6,8 @@ extends Resource
 @export var position: Vector2
 @export var is_landmark: bool = false
 @export var neighborhood: Resource  # Reference to neighborhood
-
+@export var is_starting_point: bool = false
+@export var is_destination_point: bool = false
 # Runtime-only property - not saved to file
 var connected_lines = []
 

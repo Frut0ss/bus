@@ -16,11 +16,12 @@ var current_bus_stop = null
 # Update the _ready function in bus_stop.gd
 
 func _ready():
-	# Get current bus stop from the transit system's route
-	if TransitSystem.route_stops.size() > 0:
-		current_bus_stop = TransitSystem.route_stops[TransitSystem.current_stop_index]
+	# Get current bus stop from the transit system
+	if TransitSystem.current_bus_stop:
+		current_bus_stop = TransitSystem.current_bus_stop
 	else:
-		# Fallback if no route is loaded
+		# Fallback if no current stop is set
+		print("fallback")
 		var fleet_street = TransitSystem.set_current_bus_stop("fleet_street_stop")
 		current_bus_stop = fleet_street
 	
@@ -74,6 +75,10 @@ func board_player(bus):
 		
 		# Store the bus line in TransitSystem
 		TransitSystem.current_bus_line = bus.bus_line
+		
+		# Set the active bus line and update the stops
+		TransitSystem.set_active_bus_line(bus.bus_line)
+		
 		if bus.bus_line:
 			print("Player boarded " + bus.bus_line.display_name)
 		

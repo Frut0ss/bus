@@ -45,7 +45,6 @@ func _process(delta):
 			player_found = true
 			if not player_in_range:
 				player_in_range = true
-				print("Player entered bus range")
 				
 				# Show boarding prompt if at bus stop
 				if at_bus_stop:
@@ -54,7 +53,6 @@ func _process(delta):
 	# Check if player was in range but is no longer found
 	if player_in_range and not player_found:
 		player_in_range = false
-		print("Player exited bus range")
 		display_boarding_prompt(false)
 	if not at_bus_stop:
 		# Move the bus leftward when not at a stop
@@ -113,11 +111,25 @@ func _on_body_exited(body):
 		display_boarding_prompt(false)
 
 func display_boarding_prompt(show):
-	# This is a placeholder function - you can implement actual UI here
+	# Get the current stop from the parent (bus_stop scene)
+	var current_stop = TransitSystem.current_bus_stop
+	
 	if show:
-		print("Press E to board the bus")
+		# Always check if this is end of line when showing prompt
+		var is_end_of_line = false
+		if current_stop and bus_line:
+			is_end_of_line = TransitSystem.is_end_of_line(current_stop, bus_line)
+		
+		if is_end_of_line:
+			print("End of line - Can't board this bus: " + bus_line.display_name)
+			# Grey out the bus to indicate it can't be boarded
+			modulate = Color(0.7, 0.0, 0.0, 0.5)  # Red tint with transparency
+		else:
+			print("Press E to board the bus")
+			modulate = Color(1.0, 1.0, 1.0)  # Normal color
 	else:
 		print("Boarding prompt hidden")
+		modulate = Color(1.0, 1.0, 1.0)  # Reset to normal color
 		
 func display_bus_line(line_name):
 	print("Attempting to display line name: " + line_name)
@@ -163,7 +175,15 @@ func can_player_board():
 	# Player can only board if:
 	# 1. They are in range of the bus
 	# 2. The bus is at a stop
-	return player_in_range and at_bus_stop
+	# 3. The stop is not the end of the line for this bus
+	
+	# Check if this is the end of the line
+	var is_end = false
+	if at_bus_stop and bus_line:
+		var current_stop = TransitSystem.current_bus_stop
+		is_end = TransitSystem.is_end_of_line(current_stop, bus_line)
+	
+	return player_in_range and at_bus_stop and not is_end
 
 func _on_player_animation_finished(anim_name):
 	print("Player animation finished:", anim_name)
