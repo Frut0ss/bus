@@ -4,9 +4,9 @@ extends Node
 
 # Paths to scenes for easy reference
 var scenes = {
-	"map": "res://scenes/map_scene.tscn",
-	"bus_stop": "res://scenes/bus_stop.tscn",
-	"interior_bus": "res://scenes/interior_scene.tscn",
+	"map": "res://scenes/game/map_scene.tscn",
+	"bus_stop": "res://scenes/stops/bus_stop.tscn",
+	"interior_bus": "res://scenes/game/interior_scene.tscn",
 }
 
 

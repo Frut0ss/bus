@@ -14,7 +14,7 @@ var has_boarded_bus = false
 
 
 # Preload the win scene here
-var win_scene = preload("res://scenes/win.tscn")
+var win_scene = preload("res://scenes/ui/win.tscn")
 
 # The process function is called every frame
 func _process(delta):

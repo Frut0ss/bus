@@ -13,7 +13,7 @@ extends Node2D
 
 var is_animating := false
 var stops := []
-var win_scene = preload("res://scenes/win.tscn")
+var win_scene = preload("res://scenes/ui/win.tscn")
 
 func _ready():
 	# Assign resources to nodes if present
