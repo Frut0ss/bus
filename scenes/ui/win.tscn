@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://shc01sj7ej67"]
 
-[ext_resource type="Script" uid="uid://dbyxnou23utac" path="res://scenes/win.gd" id="1_r4oei"]
+[ext_resource type="Script" uid="uid://dbyxnou23utac" path="res://scripts/ui/win.gd" id="1_r4oei"]
 
 [sub_resource type="FontFile" id="FontFile_r4oei"]
 subpixel_positioning = 0

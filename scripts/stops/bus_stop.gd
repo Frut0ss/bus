@@ -3,7 +3,7 @@ extends Node2D
 @onready var bus_spawn_timer: Timer = $BusSpawnTimer
 @onready var bus_spawn_position: Marker2D = $BusSpawnPosition
 @onready var bus_despawn_position: Marker2D = $BusDespawnPosition
-@export var bus_scene = preload("res://scenes/bus.tscn")
+@export var bus_scene = preload("res://scenes/bus/bus.tscn")
 @onready var character_player: CharacterBody2D = $CharacterPlayer
 
 # UI elements (you'll need to add these to your scene)

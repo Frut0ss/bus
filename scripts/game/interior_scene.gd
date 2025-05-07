@@ -78,7 +78,7 @@ func schedule_final_stop_disembark():
 	final_stop_tracker.start()
 	print("Scheduled disembark at final stop")
 
-func _process(delta):
+func _process(delta): 
 	if is_moving:
 		# Move the parallax background
 		$ParallaxBackground.scroll_offset.x += scroll_speed * delta
