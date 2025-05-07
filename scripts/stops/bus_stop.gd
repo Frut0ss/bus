@@ -19,21 +19,13 @@ func _ready():
 	# Get current bus stop from the transit system
 	if TransitSystem.current_bus_stop:
 		current_bus_stop = TransitSystem.current_bus_stop
-	else:
-		# Fallback if no current stop is set
-		print("fallback")
-		var fleet_street = TransitSystem.set_current_bus_stop("fleet_street_stop")
-		current_bus_stop = fleet_street
 	
 	update_bus_stop_display()
-	
-	# Connect the timer's timeout signal
-	bus_spawn_timer.connect("timeout", Callable(self, "_on_bus_spawn_timer_timeout"))
 	
 	# Start the timer
 	bus_spawn_timer.start()
 	
-func _process(delta):
+func _process(_delta):
 	# Check if any buses have reached the despawn position
 	for bus in active_buses:
 		if bus != null and bus.position.x <= bus_despawn_position.position.x:
@@ -83,7 +75,7 @@ func board_player(bus):
 			print("Player boarded " + bus.bus_line.display_name)
 		
 		print("Advancing to next stop from: ", TransitSystem.current_stop_index)
-		var route_completed = TransitSystem.advance_to_next_stop()
+		TransitSystem.advance_to_next_stop()
 		print("Now at stop index: ", TransitSystem.current_stop_index)
 		
 		# Change state to interior bus

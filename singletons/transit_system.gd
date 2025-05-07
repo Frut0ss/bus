@@ -1,13 +1,10 @@
 extends Node
 
-# Current state tracking
-var current_map_resource = null
-var current_player_position = null
 var current_bus_line = null
 var current_bus_stop = null
 
 var active_route_stops = [] # Stops on the current bus line
-var active_bus_line = null  # The currently active bus lineources in sequence
+var active_bus_line = null  # The currently active bus line
 var current_stop_index  # Current position in the route
 var destination_index 
 
@@ -16,54 +13,44 @@ var bus_stops = {}
 var bus_lines = {}
 var bus_line_variants = {}
 
-# Signal when the current bus stop changes
+signal destination_reached(stop_resource)
 signal bus_stop_changed(new_stop)
+signal stop_data_updated(stop_id)
 
 # Called when the node enters the scene tree
 func _ready():
-	# We'll implement load_route_stops in a future step
 	initialize_transit_system()
-	
-	# Load bus lines 
 	load_all_bus_lines()
 	connect_lines_to_stops()
-	# Print debug information
-	print("TransitSystem initialized with:")
-	print("- " + str(bus_stops.size()) + " bus stops")
-	print("- " + str(bus_lines.size()) + " bus lines")
+	print("TransitSystem initialized successfully")
 
 func initialize_transit_system():
 	# Load all bus stops first
 	load_all_bus_stops()
 	
 	# Check for starting and destination points
-	var starting_stop = null
-	var destination_stop = null
+	var starting_stop
+	var destination_stop
 	
 	# Find starting and destination stops
 	for stop_id in bus_stops:
 		var stop = bus_stops[stop_id]
 		if stop.is_starting_point:
 			starting_stop = stop
-			print("Found starting point: " + stop.display_name)
 		if stop.is_destination_point:
 			destination_stop = stop
-			print("Found destination point: " + stop.display_name)
 	
 	# Set current stop to the starting point
 	if starting_stop:
 		current_bus_stop = starting_stop
-		print("Setting starting point to: " + starting_stop.display_name)
 	else:
 		print("Warning: No starting point found among bus stops!")
 		
 	# Set current_stop_index to -1 since we're not in a bus line yet
-	# It will be set correctly when a bus line is activated
 	current_stop_index = -1
 	
 # Helper function to load all bus stops
 func load_all_bus_stops():
-# Clear existing stops
 	bus_stops.clear()
 
 	# List of known stops to load
@@ -71,52 +58,35 @@ func load_all_bus_stops():
 
 	# Load each stop
 	for stop_id in stop_ids:
-		var stop = load_bus_stop(stop_id)
-		if stop:
-			print("Loaded bus stop: " + stop.display_name)
+		load_bus_stop(stop_id)
 
 	return bus_stops
 
-
-
-# Add this function to TransitSystem.gd
 func load_all_bus_lines():
 	var line_ids = ["red_line", "blue_line", "green_line"]
 	
 	for line_id in line_ids:
 		load_bus_line(line_id)
 	
-	print("Loaded " + str(bus_lines.size()) + " bus lines")
 	return bus_lines
 
 # Load a bus line by ID
 func load_bus_line(line_id):
 	var path = "res://resources/bus_lines/" + line_id + ".tres"
 	if ResourceLoader.exists(path):
-		print("Loading bus line from: " + path)
-		
 		# Try to load with ResourceLoader with a specific type hint
 		var line = ResourceLoader.load(path, "Resource")
 		
 		if line:
-			print("Successfully loaded line: " + line_id)
 			bus_lines[line_id] = line
 			
 			# Only try to access stops if the stops property exists
-			if line.stops :
-				var stop_names = []
-				for stop in line.stops:
-					if stop:
-						stop_names.append(stop.display_name)
-				print(line.display_name + " stops: " + str(stop_names))
-			else:
+			if not line.stops:
 				print("WARNING: " + line_id + " has no stops or stops is null")
 			
 			return line
 			
 func connect_lines_to_stops():
-	print("Connecting bus lines to stops...")
-	
 	# For each bus line, connect it to its stops
 	for line_id in bus_lines:
 		var line = bus_lines[line_id]
@@ -124,7 +94,6 @@ func connect_lines_to_stops():
 		# For each stop in the line, add the line to the stop's connected_lines
 		for stop in line.stops:
 			stop.add_line(line)
-			print("Connected " + line.display_name + " to " + stop.display_name)
 
 # Load a bus stop by ID
 func load_bus_stop(stop_id):
@@ -149,16 +118,6 @@ func set_current_bus_stop(stop_id):
 		return current_bus_stop
 	return null
 
-# Get current bus stop details
-func get_current_bus_stop():
-	return current_bus_stop
-
-# Get bus lines that stop at the current bus stop
-func get_current_bus_stop_lines():
-	if current_bus_stop:
-		return current_bus_stop.connected_lines
-	return []
-
 func advance_to_next_stop():
 	# Make sure we have an active bus line
 	if not active_bus_line or active_route_stops.size() == 0:
@@ -166,37 +125,21 @@ func advance_to_next_stop():
 		return true
 	
 	current_stop_index += 1
-	print("Advanced to stop index: ", current_stop_index)
 	
 	# Safety check to avoid index out of bounds
 	if current_stop_index < active_route_stops.size():
 		current_bus_stop = active_route_stops[current_stop_index]
-		print("New stop: ", current_bus_stop.display_name if current_bus_stop else "None")
 		emit_signal("bus_stop_changed", current_bus_stop)
 		
 		# Check if we've reached a destination
 		if current_bus_stop.is_destination_point:
-			print("Reached destination stop!")
+			print("Destination reached!")
 			return true
 			
 		return false  # Not at the end yet
 	
 	return true  # We're at the end
-	
-	
-# Get the name of the current stop
-func get_current_stop_name():
-	if current_bus_stop and current_bus_stop.has("display_name"):
-		return current_bus_stop.display_name
-	return "Unknown Stop"
 
-func find_stop_index_by_name(stop_name, stops_array):
-	for i in range(stops_array.size()):
-		if stops_array[i].display_name == stop_name:
-			return i
-	return -1
-
-# Add this function to transit_system.gd
 func set_active_bus_line(bus_line):
 	active_bus_line = bus_line
 	
@@ -215,10 +158,6 @@ func set_active_bus_line(bus_line):
 		if current_stop_index == -1 and active_route_stops.size() > 0:
 			current_stop_index = 0
 			current_bus_stop = active_route_stops[0]
-		
-		print("Set active bus line: " + bus_line.display_name)
-		print("Active route has " + str(active_route_stops.size()) + " stops")
-		print("Current stop index: " + str(current_stop_index))
 	else:
 		active_route_stops = []
 		print("Warning: Tried to set null bus line")
@@ -231,9 +170,32 @@ func is_end_of_line(stop_resource, bus_line):
 	# Get the last stop in this bus line
 	var last_stop = bus_line.stops[bus_line.stops.size() - 1]
 	
-	if stop_resource.display_name == last_stop.display_name:
-		print("Stop " + stop_resource.display_name + " is the end of line for " + bus_line.display_name)
-		return true
-	
 	# Check if the current stop is the last one
-	return stop_resource.display_name == last_stop.display_name
+	var is_last = stop_resource.display_name == last_stop.display_name
+	
+	return is_last
+
+func register_stop(stop_node, stop_id):
+	# Store reference to stop
+	if bus_stops.has(stop_id):
+		# Send stop data to the node
+		stop_node.set_stop_data(bus_stops[stop_id])
+	else:
+		print("Warning: Stop ID not found: " + stop_id)
+		
+func update_all_stops():
+	# Emit signal for all stops to update
+	for stop_id in bus_stops:
+		emit_signal("stop_data_updated", stop_id)
+
+func check_destination_reached():
+	if not current_bus_stop:
+		return false
+		
+	if current_bus_stop.is_destination_point:
+		print("Destination reached!")
+		# Emit a signal that other systems can listen for
+		emit_signal("destination_reached", current_bus_stop)
+		return true
+		
+	return false
