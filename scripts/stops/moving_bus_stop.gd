@@ -1,12 +1,11 @@
-# Add to moving_bus_stop.gd
-extends Node2D
+extends BaseStop
 
 @onready var bus_stop_name: Label = $Name
 @onready var area: Area2D = $Area2D
-var stop_resource: BusStopResource
 var player_in_range = false
 
 func _ready():
+	super._ready()
 	# Connect area signals
 	area.connect("body_entered", Callable(self, "_on_body_entered"))
 	area.connect("body_exited", Callable(self, "_on_body_exited"))

@@ -1,6 +1,6 @@
 extends Node
 
-@onready var transition_overlay: ColorRect = $TransitionOverlay
+
 
 # Paths to scenes for easy reference
 var scenes = {
@@ -42,30 +42,3 @@ func change_scene(scene_name):
 	
 	# Update current scene reference
 	current_scene = new_scene
-
-
-# NEED FIXING
-#func fade_to_scene(scene_name, duration = 0.5):
-	#if is_transitioning:
-		#return
-	#
-	#is_transitioning = true
-	#
-	## Fade out
-	##transition_overlay.color.a = 0
-	#transition_overlay.visible = true
-	#
-	#var tween = create_tween()
-	#tween.tween_property(transition_overlay, "color:a", 1.0, duration)
-	#await tween.finished
-	#
-	## Change scene
-	#change_scene(scene_name)
-	#
-	## Fade in
-	#tween = create_tween()
-	#tween.tween_property(transition_overlay, "color:a", 0.0, duration)
-	#await tween.finished
-	#
-	#transition_overlay.visible = false
-	#is_transitioning = false

@@ -95,7 +95,6 @@ func _on_body_entered(body):
 	# Check if it's the player
 	if body.is_in_group("player"):
 		player_in_range = true
-		print("Player entered bus range")
 		
 		# Optional: Show a visual indicator that boarding is possible
 		if at_bus_stop:
@@ -105,16 +104,15 @@ func _on_body_exited(body):
 	# Check if it's the player
 	if body.is_in_group("player"):
 		player_in_range = false
-		print("Player exited bus range")
 		
 		# Optional: Hide boarding prompt
 		display_boarding_prompt(false)
 
-func display_boarding_prompt(show):
+func display_boarding_prompt(display):
 	# Get the current stop from the parent (bus_stop scene)
 	var current_stop = TransitSystem.current_bus_stop
 	
-	if show:
+	if display:
 		# Always check if this is end of line when showing prompt
 		var is_end_of_line = false
 		if current_stop and bus_line:

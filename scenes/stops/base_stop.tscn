@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://cen3jareqtibq"]
+
+[ext_resource type="Script" uid="uid://cwobyw5nw6uvn" path="res://scripts/stops/base_stop.gd" id="1_qyxia"]
+
+[node name="BaseStop" type="Node2D"]
+script = ExtResource("1_qyxia")

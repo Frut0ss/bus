@@ -12,35 +12,39 @@ var selected_map_stop_id = ""
 # Tracks if the player has boarded the bus (starts as false)
 var has_boarded_bus = false
 
-
 # Preload the win scene here
 var win_scene = preload("res://scenes/ui/win.tscn")
 
+func _ready():
+	# Connect to TransitSystem signals
+	TransitSystem.connect("destination_reached", Callable(self, "_on_destination_reached"))
+
 # The process function is called every frame
-func _process(delta):
+func _process(_delta):
 	# Use a match statement to handle different game states
 	match current_state:
 		# If the player is in the MAP_VIEW (map screen)
 		GameState.MAP_VIEW:
-			if check_destination():
+			# Check if we've reached the destination
+			if TransitSystem.check_destination_reached():
 				pass
 			else:
 				if Input.is_action_just_pressed("click"):
-				# Change the game state to BUS_STOP, where the player selects a bus stop
+					# Change the game state to BUS_STOP, where the player selects a bus stop
 					change_to_state(GameState.BUS_STOP)
-
+					
 		# If the player is at the BUS_STOP screen (choosing a bus stop)
 		GameState.BUS_STOP:
 			if Input.is_action_just_pressed("click"):
 				# Move to the INTERIOR_BUS state when the player clicks (simulating boarding the bus)
 				change_to_state(GameState.INTERIOR_BUS)
-
+				
 		# If the player is inside the bus (INTERIOR_BUS state)
 		GameState.INTERIOR_BUS:
 			if Input.is_action_just_pressed("click"):
 				# If the player clicks, go back to the map screen
 				change_to_state(GameState.MAP_VIEW)
-
+				
 		# Handle GAME_WON state (after the game is won)
 		GameState.GAME_WON:
 			# When the game is won, show the win screen
@@ -56,13 +60,13 @@ func change_to_state(new_state):
 		# When transitioning to the MAP_VIEW state
 		GameState.MAP_VIEW:
 			# Check if we've reached the destination
-			if check_destination():
-				# If we've reached the destination, the check_destination function
-				# will change the state to GAME_WON, so we don't need to do anything else
+			if TransitSystem.check_destination_reached():
+				# If we've reached the destination, the signal handler will
+				# change the state to GAME_WON, so we don't need to do anything else
 				pass
 			else:
 				# Reset the current bus line to null when returning to the map view
-				TransitSystem.current_bus_line = null
+				TransitSystem.active_bus_line = null
 				# Transition to the "map" scene (show the map)
 				SceneTransitionManager.change_scene("map")
 			
@@ -100,15 +104,6 @@ func show_win_screen():
 	if label:
 		label.text = "You Won!"  # Set the win message
 
-func check_destination():
-	# Get the current stop index from TransitSystem
-	var current_index = TransitSystem.current_stop_index
-	var destination_index = TransitSystem.destination_index
-	
-	# Check if we've reached the destination
-	if current_index == destination_index:
-		print("Destination reached!")
-		change_to_state(GameState.GAME_WON)
-		return true
-	
-	return false
+func _on_destination_reached(_stop_resource):
+	# Change the game state to win
+	change_to_state(GameState.GAME_WON)

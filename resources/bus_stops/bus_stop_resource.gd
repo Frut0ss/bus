@@ -21,7 +21,7 @@ func add_line(line_resource):
 	
 	if line_resource not in connected_lines:
 		connected_lines.append(line_resource)
-		print("Added " + line_resource.display_name + " to " + display_name)
+
 
 func remove_line(line_resource):
 	if line_resource in connected_lines:
