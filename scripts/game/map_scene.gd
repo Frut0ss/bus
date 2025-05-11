@@ -1,97 +1,234 @@
 extends Node2D
 
-@export var fleet_stop: BusStopResource
-@export var temple_bar_stop: BusStopResource
-@export var meeting_house_stop: BusStopResource
-@export var dame_street_stop: BusStopResource
+# Dictionary to map stop resources to node references
+var stop_nodes = {}
+# Dictionary of map node references by name
+var map_stop_nodes = {}
+@onready var player_marker: Node2D = $Background/PlayerMarker
+@onready var destination_marker: Node2D = $Background/DestinationMarker
 
-@onready var fleet_node := $Background/Fleet
-@onready var temple_bar_node := $Background/TempleBar
-@onready var meeting_house := $Background/Meetinghouse
-@onready var dame_street := $Background/Damestreet
-@onready var player_marker := $Background/PlayerMarker
+var player_path = null
 
-var is_animating := false
-var stops := []
-var win_scene = preload("res://scenes/ui/win.tscn")
+# Constants for visualization
+const ROUTE_LINE_WIDTH = 4
+const DEFAULT_LINE_COLOR = Color(0.7, 0.7, 0.7, 0.7)  # Gray with transparency
+const PLAYER_PATH_COLOR = Color(1, 0, 0, 1)  # Fully opaque red
+const PLAYER_PATH_WIDTH = 16  # Much wider than normal routes
 
+# Called when the node enters the scene tree for the first time
 func _ready():
-	# Assign resources to nodes if present
-	if fleet_stop:
-		fleet_node.set_bus_stop_resource(fleet_stop)
-	if temple_bar_stop:
-		temple_bar_node.set_bus_stop_resource(temple_bar_stop)
-	if meeting_house_stop:
-		meeting_house.set_bus_stop_resource(meeting_house_stop)
-	if dame_street_stop:
-		dame_street.set_bus_stop_resource(dame_street_stop)
+	# First, collect all stop nodes from the scene
+	for child in $Background.get_children():
+		if child.is_in_group("map_stops") or "stop" in child.name.to_lower():
+			var node_name = child.name.to_lower()
+			map_stop_nodes[node_name] = child
+			print("Found map node: " + node_name)
+	
+	# Now connect each stop resource to its visual node
+	connect_stops_to_nodes()
+	
+	# Connect to TransitSystem signals
+	TransitSystem.connect("bus_stop_changed", Callable(self, "_on_bus_stop_changed"))
+	
+	# Draw bus routes FIRST (so they're below the player path)
+	draw_all_bus_routes()
+	
+	# Initialize player visualization LAST (so it's on top)
+	setup_player_visualization()
+	
+	# Update map display
+	update_map_display()
+	
+	# Print debug info
+	print("Map scene initialized with " + str(stop_nodes.size()) + " stops")
 
-	# Define stops in route order
-	stops = [
-		fleet_node.global_position,
-		temple_bar_node.global_position,
-		meeting_house.global_position,
-		dame_street.global_position
+# Connect stop resources to their visual nodes
+func connect_stops_to_nodes():
+	# For each stop in the transit system
+	for stop_id in TransitSystem.bus_stops:
+		var stop_resource = TransitSystem.bus_stops[stop_id]
+		
+		# Find a matching node for this stop
+		var matched_node = find_matching_node(stop_id, stop_resource)
+		
+		if matched_node:
+			# Connect resource to node
+			stop_nodes[stop_resource] = matched_node
+			print("Connected stop resource '" + stop_id + "' to node")
+		else:
+			print("WARNING: No matching node found for stop: " + stop_id)
+
+# Find a node that matches this stop
+func find_matching_node(stop_id, stop_resource):
+	# Try different formats of the name
+	var possible_names = [
+		stop_id.to_lower(),                     # fleet_street
+		stop_id.split("_")[0].to_lower(),       # fleet
+		stop_id.replace("_", "").to_lower(),    # fleetstreet
+		stop_resource.display_name.to_lower().replace(" ", "")  # Fleet Street -> fleetstreet
 	]
+	
+	# Check if any match our node names
+	for name in possible_names:
+		for node_name in map_stop_nodes:
+			if name in node_name or node_name in name:
+				return map_stop_nodes[node_name]
+	
+	# No match found
+	return null
 
-	# Set player marker to current stop from TransitSystem
-	var current_stop_index = TransitSystem.current_stop_index
-	if current_stop_index < stops.size():
-		player_marker.global_position = stops[current_stop_index]
+# Setup player visualization elements
+func setup_player_visualization():
+	# Remove any existing player path
+	if player_path != null:
+		if player_path.is_inside_tree():
+			player_path.queue_free()
+		player_path = null
+	
+	# Create a new player path
+	player_path = Line2D.new()
+	player_path.name = "PlayerPath" # Give it a distinct name
+	player_path.width = PLAYER_PATH_WIDTH
+	player_path.default_color = PLAYER_PATH_COLOR
+	player_path.z_index = 100  # Make sure it renders above everything else
+	player_path.begin_cap_mode = Line2D.LINE_CAP_ROUND
+	player_path.end_cap_mode = Line2D.LINE_CAP_ROUND
+	player_path.antialiased = true
+	$Background.add_child(player_path)
+	print("Created player path: " + str(player_path.get_path()))
+	
+	# Update the player path with all visited stops from TransitSystem
+	update_player_path()
+	
+	# Make sure the current stop is included
+	if TransitSystem.current_bus_stop and not TransitSystem.visited_stops.has(TransitSystem.current_bus_stop):
+		TransitSystem.add_visited_stop(TransitSystem.current_bus_stop)
+		update_player_path()
+
+# Draw all bus routes on the map
+func draw_all_bus_routes():
+	# Clear any existing route lines, but keep player path
+	for child in $Background.get_children():
+		if child is Line2D and (not player_path or child != player_path):
+			child.queue_free()
+	
+	# Draw each bus line
+	for line_id in TransitSystem.bus_lines:
+		var bus_line = TransitSystem.bus_lines[line_id]
+		if bus_line and bus_line.stops and bus_line.stops.size() >= 2:
+			draw_bus_route(bus_line, line_id)
+			print("Drawing route for: " + line_id)
+		else:
+			print("WARNING: Skipping route for " + line_id + " (invalid data)")
+
+# Draw a single bus route on the map
+func draw_bus_route(bus_line, line_id):
+	# Create a new Line2D node for this route
+	var route_line = Line2D.new()
+	route_line.width = ROUTE_LINE_WIDTH
+	route_line.z_index = 0  # Below player path
+	
+	# Get route color from the bus_line resource
+	var line_color = DEFAULT_LINE_COLOR
+	
+	# Check if the resource has a color property
+	if bus_line.color:
+		line_color = bus_line.color
+		# Add some transparency if the color is fully opaque
+		if line_color.a > 0.9:
+			line_color.a = 0.7
+	
+	# Set the line color
+	route_line.default_color = line_color
+	
+	# Add points for each stop in the line
+	for stop in bus_line.stops:
+		if stop_nodes.has(stop):
+			var node_position = stop_nodes[stop].position
+			route_line.add_point(node_position)
+	
+	# Only add the route if it has at least 2 points
+	if route_line.get_point_count() >= 2:
+		$Background.add_child(route_line)
+		print("Added route line with " + str(route_line.get_point_count()) + " points")
 	else:
-		# Fallback to first stop
-		player_marker.global_position = stops[0]
+		route_line.queue_free()
+		print("WARNING: Route line had fewer than 2 points")
 
-	# Draw full route
-	draw_route_line(stops)
+# Update the map display based on current transit system state
+func update_map_display():
+	# Update stop labels
+	for stop_resource in stop_nodes.keys():
+		var node = stop_nodes[stop_resource]
+		if node and node.has_method("set_stop_name"):
+			node.set_stop_name(stop_resource.display_name)
 	
-	#move_to_next_stop()
+	# Update player marker position
+	update_player_marker()
 	
-	draw_journey_progress(current_stop_index)
+	# Update destination marker
+	update_destination_marker()
 
-func draw_route_line(stop_positions: Array):
-	var line = Line2D.new()
-	line.default_color = Color(0.0, 0.45, 0.85)
-	line.width = 6.0
-	line.z_index = 1
-	add_child(line)
+# Update player marker position to current stop
+func update_player_marker():
+	if player_marker and TransitSystem.current_bus_stop:
+		var current_node = stop_nodes.get(TransitSystem.current_bus_stop)
+		if current_node:
+			player_marker.global_position = current_node.global_position
+			player_marker.visible = true
+		else:
+			player_marker.visible = false
 
-	for pos in stop_positions:
-		line.add_point(pos)
+# Update destination marker position
+func update_destination_marker():
+	if destination_marker:
+		# Find a destination stop
+		var destination_stop = find_destination_stop()
+		
+		if destination_stop:
+			var dest_node = stop_nodes.get(destination_stop)
+			if dest_node:
+				destination_marker.global_position = dest_node.global_position
+				destination_marker.visible = true
+				return
+		
+		# If we didn't find a destination or its node, hide the marker
+		destination_marker.visible = false
 
-func draw_journey_progress(current_index):
-	# Create the line object
-	var journey_line = Line2D.new()
-	journey_line.default_color = Color(1, 0, 0)  # Red color for journey
-	journey_line.width = 8.0
-	journey_line.z_index = 15
-	add_child(journey_line)
+# Find a destination stop in the transit system
+func find_destination_stop():
+	for stop_id in TransitSystem.bus_stops:
+		var stop = TransitSystem.bus_stops[stop_id]
+		if stop.is_destination_point:
+			return stop
+	return null
+
+# Update the visual representation of the player's path
+func update_player_path():
+	if player_path:
+		player_path.clear_points()
+		
+		# Debug the path points before adding
+		var point_strings = []
+		
+		# Add points for all visited stops from the TransitSystem
+		for stop in TransitSystem.visited_stops:
+			if stop_nodes.has(stop):
+				var node_position = stop_nodes[stop].position
+				point_strings.append(stop.display_name + " at " + str(node_position))
+				player_path.add_point(node_position)
+		
+		print("Updated player path with points: " + str(point_strings))
+		print("Player path now has " + str(player_path.get_point_count()) + " points")
+	else:
+		print("ERROR: Tried to update player path but it doesn't exist!")
+
+# Signal handler for when the bus stop changes in the transit system
+func _on_bus_stop_changed(new_stop):
+	print("Bus stop changed to: " + new_stop.display_name)
 	
-	# If we're only at the first stop, just add that point
-	if current_index == 0:
-		journey_line.add_point(stops[0])
-		return
+	# Updates will be handled through TransitSystem signals
+	update_player_path()
 	
-	# Add only the first point initially
-	journey_line.add_point(stops[0])
-	
-	# Create a tween for animation
-	var tween = create_tween()
-	var duration = 0.75  # Total animation duration in seconds
-	
-	# Calculate delay between adding each point
-	var delay_per_point = duration / current_index
-	
-	# Animate adding each subsequent point
-	for i in range(1, current_index + 1):
-		if i < stops.size():
-			# Create a closure to capture the current index
-			var add_point_func = func():
-				journey_line.add_point(stops[i])
-			
-			# Add the point after a delay
-			tween.tween_callback(add_point_func).set_delay(delay_per_point)
-#
-#func _input(event):
-	#if event is InputEventKey and event.pressed and event.keycode == KEY_SPACE:
-		#move_to_next_stop()
+	# Update the map display to reflect the new stop
+	update_map_display()

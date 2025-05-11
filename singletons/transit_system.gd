@@ -4,6 +4,7 @@ var current_bus_line = null
 var current_bus_stop = null
 
 var active_route_stops = [] # Stops on the current bus line
+var visited_stops = []
 var active_bus_line = null  # The currently active bus line
 var current_stop_index  # Current position in the route
 var destination_index 
@@ -114,6 +115,7 @@ func set_current_bus_stop(stop_id):
 		current_bus_stop = load_bus_stop(stop_id)
 	
 	if current_bus_stop:
+		add_visited_stop(current_bus_stop)
 		emit_signal("bus_stop_changed", current_bus_stop)
 		return current_bus_stop
 	return null
@@ -199,3 +201,10 @@ func check_destination_reached():
 		return true
 		
 	return false
+
+func add_visited_stop(stop_resource):
+	# Only add if not already the last stop
+	if visited_stops.size() == 0 or visited_stops[-1] != stop_resource:
+		visited_stops.append(stop_resource)
+		print("TransitSystem: Added visited stop: " + stop_resource.display_name)
+		print("TransitSystem: Total visited stops: " + str(visited_stops.size()))
