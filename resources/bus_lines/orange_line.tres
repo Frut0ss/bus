@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="BusLineResource" load_steps=13 format=3 uid="uid://dv0fsyoswfe6f"]
+
+[ext_resource type="Script" uid="uid://cqlhj722788w0" path="res://resources/bus_lines/bus_line_resource.gd" id="1_jrosl"]
+[ext_resource type="Script" uid="uid://dyq0mwcsvq2gc" path="res://resources/bus_stops/bus_stop_resource.gd" id="2_egxlw"]
+[ext_resource type="Resource" uid="uid://bibo03nncjunu" path="res://resources/bus_stops/phoenix_park/zoo_entrance_stop.tres" id="3_yu2kw"]
+[ext_resource type="Resource" uid="uid://d3f34yl06m4m5" path="res://resources/bus_stops/phoenix_park/phoenix_monument_stop.tres" id="4_arniv"]
+[ext_resource type="Resource" uid="uid://bvgo4rqawjwp1" path="res://resources/bus_stops/phoenix_park/aras_an_uachtarain_stop.tres" id="5_eo2n1"]
+[ext_resource type="Resource" uid="uid://dl3dqigo8pxgi" path="res://resources/bus_stops/phoenix_park/wellington_monument_stop.tres" id="6_weikd"]
+[ext_resource type="Resource" uid="uid://0ll5vj1rjn4c" path="res://resources/bus_stops/smithfield-stoneybatter/collins_barrack_stop.tres" id="7_rs2wd"]
+[ext_resource type="Resource" uid="uid://bru7ty2xv5fkf" path="res://resources/bus_stops/smithfield-stoneybatter/smithfield_square_stop.tres" id="8_7e1by"]
+[ext_resource type="Resource" uid="uid://dtpvuddqx0sb8" path="res://resources/bus_stops/north_side/four_courts_stop.tres" id="9_rl5q8"]
+[ext_resource type="Resource" uid="uid://dc2ni4cs2n1xn" path="res://resources/bus_stops/temple_bar/meeting_house_square_stop.tres" id="10_3ghxe"]
+[ext_resource type="Resource" uid="uid://cb8yid74i47dl" path="res://resources/bus_stops/temple_bar/temple_lane_stop.tres" id="11_umxdj"]
+[ext_resource type="Resource" uid="uid://dxi8net2mif1c" path="res://resources/bus_stops/temple_bar/fleet_street_stop.tres" id="12_kfrob"]
+
+[resource]
+script = ExtResource("1_jrosl")
+id = "orange_line"
+display_name = "Orange line"
+color = Color(1, 0.596078, 0, 1)
+stops = Array[ExtResource("2_egxlw")]([ExtResource("3_yu2kw"), ExtResource("4_arniv"), ExtResource("5_eo2n1"), ExtResource("6_weikd"), ExtResource("7_rs2wd"), ExtResource("8_7e1by"), ExtResource("9_rl5q8"), ExtResource("10_3ghxe"), ExtResource("11_umxdj"), ExtResource("12_kfrob")])
+frequency = 5.0
+travel_time_between_stops = 2.0
+variants = []
+metadata/_custom_type_script = "uid://cqlhj722788w0"

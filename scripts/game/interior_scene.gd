@@ -251,7 +251,7 @@ func update_current_stop_position():
 							TransitSystem.current_stop_index = i
 							TransitSystem.current_bus_stop = current_stop_resource
 							print("Updated current stop to: " + current_stop_resource.display_name + " (index: " + str(i) + ")")
-							
+							TransitSystem.add_visited_stop(TransitSystem.current_bus_stop)
 							# Check if this is the last stop in the active route
 							var last_index = TransitSystem.active_route_stops.size() - 1
 							if i == last_index:

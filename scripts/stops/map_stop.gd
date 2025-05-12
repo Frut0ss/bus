@@ -1,4 +1,6 @@
+@tool
 extends BaseStop
+@onready var label: Label = $Label
 
 func _ready():
 	super._ready()
@@ -10,7 +12,5 @@ func set_bus_stop_resource(resource: Resource) -> void:
 
 # Update any UI elements or logic based on the resource
 func update_display() -> void:
-	if has_node("Label") and stop_resource:
-		var label = $Label
-		if label is Label:
+	if stop_resource:
 			label.text = stop_resource.display_name

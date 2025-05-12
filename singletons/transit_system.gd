@@ -13,6 +13,7 @@ var destination_index
 var bus_stops = {}
 var bus_lines = {}
 var bus_line_variants = {}
+var stop_id
 
 signal destination_reached(stop_resource)
 signal bus_stop_changed(new_stop)
@@ -53,18 +54,44 @@ func initialize_transit_system():
 # Helper function to load all bus stops
 func load_all_bus_stops():
 	bus_stops.clear()
-
-	# List of known stops to load
-	var stop_ids = ["fleet_street", "temple_lane", "meeting_house_square", "dame_street"]
-
-	# Load each stop
-	for stop_id in stop_ids:
-		load_bus_stop(stop_id)
-
+	
+	# Explicitly list your neighborhoods
+	var neighborhoods = [
+		"cabra-philsborough", 
+		"north_side", 
+		"phoenix_park", 
+		"smithfield-stoneybatter", 
+		"temple_bar"
+	]
+	
+	# Load stops from each neighborhood
+	for neighborhood in neighborhoods:
+		load_stops_from_neighborhood(neighborhood)
+		
+	print("Loaded " + str(bus_stops.size()) + " bus stops from " + str(neighborhoods.size()) + " neighborhoods")
 	return bus_stops
 
+func load_stops_from_neighborhood(neighborhood):
+	var dir_path = "res://resources/bus_stops/" + neighborhood
+	var dir = DirAccess.open(dir_path)
+	
+	if dir:
+		dir.list_dir_begin()
+		var file_name = dir.get_next()
+		
+		while file_name != "":
+			if not dir.current_is_dir() and file_name.ends_with(".tres"):
+				# Extract the stop_id from the filename (remove _stop.tres)
+				stop_id = file_name.replace("_stop.tres", "")
+				load_bus_stop(stop_id, neighborhood)
+			file_name = dir.get_next()
+		
+		dir.list_dir_end()
+	else:
+		print("Error: Could not open neighborhood directory: " + dir_path)
+
 func load_all_bus_lines():
-	var line_ids = ["red_line", "blue_line", "green_line"]
+	var line_ids = ["red_line", "orange_line", "green_line"]
 	
 	for line_id in line_ids:
 		load_bus_line(line_id)
@@ -97,11 +124,18 @@ func connect_lines_to_stops():
 			stop.add_line(line)
 
 # Load a bus stop by ID
-func load_bus_stop(stop_id):
-	var path = "res://resources/bus_stops/" + stop_id + "_stop.tres"
+func load_bus_stop(stop_id, neighborhood):
+	var path = "res://resources/bus_stops/" + neighborhood + "/" + stop_id + "_stop.tres"
 	if ResourceLoader.exists(path):
 		var stop = load(path)
-		bus_stops[stop_id] = stop
+		
+		# Store the neighborhood in the resource if it has that property
+		if stop.neighborhood.display_name:
+			stop.neighborhood.display_name = neighborhood
+		
+		# Store using the full ID to avoid collisions between neighborhoods
+		var full_id = neighborhood + "/" + stop_id
+		bus_stops[full_id] = stop
 		return stop
 	else:
 		print("Error: Bus stop resource not found: " + path)
@@ -109,10 +143,21 @@ func load_bus_stop(stop_id):
 
 # Set the current bus stop (when player moves or boards/exits bus)
 func set_current_bus_stop(stop_id):
+	# Check if this is already a full_id (neighborhood/stop_id)
 	if stop_id in bus_stops:
 		current_bus_stop = bus_stops[stop_id]
 	else:
-		current_bus_stop = load_bus_stop(stop_id)
+		# If it's not a full_id, we need to find which neighborhood has this stop
+		var found = false
+		for full_id in bus_stops.keys():
+			if full_id.ends_with("/" + stop_id):
+				current_bus_stop = bus_stops[full_id]
+				found = true
+				break
+				
+		if not found:
+			print("Error: Could not find stop_id: " + stop_id)
+			return null
 	
 	if current_bus_stop:
 		add_visited_stop(current_bus_stop)
@@ -208,3 +253,5 @@ func add_visited_stop(stop_resource):
 		visited_stops.append(stop_resource)
 		print("TransitSystem: Added visited stop: " + stop_resource.display_name)
 		print("TransitSystem: Total visited stops: " + str(visited_stops.size()))
+	else:
+		print("Couldn't add visited stop")

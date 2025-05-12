@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="NeighborhoodResource" load_steps=2 format=3 uid="uid://cgekf7pakwy3x"]
+
+[ext_resource type="Script" uid="uid://bnp2qh4oegwey" path="res://resources/neighborhoods/neighborhood_resource.gd" id="1_4650p"]
+
+[resource]
+script = ExtResource("1_4650p")
+id = ""
+display_name = "North Side"
+color = Color(0.407843, 0.709804, 0.407843, 1)
+ambient_sound = ""
+metadata/_custom_type_script = "uid://bnp2qh4oegwey"

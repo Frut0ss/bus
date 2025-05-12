@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="NeighborhoodResource" load_steps=2 format=3 uid="uid://c6g41okxppjwi"]
+
+[ext_resource type="Script" uid="uid://bnp2qh4oegwey" path="res://resources/neighborhoods/neighborhood_resource.gd" id="1_brn4b"]
+
+[resource]
+script = ExtResource("1_brn4b")
+id = ""
+display_name = "Stephen's Green"
+color = Color(0, 0, 0, 1)
+ambient_sound = ""
+metadata/_custom_type_script = "uid://bnp2qh4oegwey"

@@ -1,17 +1,23 @@
-[gd_resource type="Resource" script_class="BusLineResource" load_steps=6 format=3 uid="uid://cfjeuojec64xe"]
+[gd_resource type="Resource" script_class="BusLineResource" load_steps=12 format=3 uid="uid://cfjeuojec64xe"]
 
 [ext_resource type="Script" uid="uid://cqlhj722788w0" path="res://resources/bus_lines/bus_line_resource.gd" id="1_acm6b"]
 [ext_resource type="Script" uid="uid://dyq0mwcsvq2gc" path="res://resources/bus_stops/bus_stop_resource.gd" id="2_t78o5"]
-[ext_resource type="Resource" uid="uid://b7bxli8tegtc2" path="res://resources/bus_stops/dame_street_stop.tres" id="3_05f2o"]
-[ext_resource type="Resource" uid="uid://dc2ni4cs2n1xn" path="res://resources/bus_stops/meeting_house_square_stop.tres" id="4_3q4gn"]
-[ext_resource type="Resource" uid="uid://dxi8net2mif1c" path="res://resources/bus_stops/fleet_street_stop.tres" id="5_ttxjf"]
+[ext_resource type="Resource" uid="uid://b7bxli8tegtc2" path="res://resources/bus_stops/temple_bar/dame_street_stop.tres" id="3_05f2o"]
+[ext_resource type="Resource" uid="uid://cspp0ohho22yh" path="res://resources/bus_stops/cabra-philsborough/bernard_shaw_stop.tres" id="3_wn0js"]
+[ext_resource type="Resource" uid="uid://dc2ni4cs2n1xn" path="res://resources/bus_stops/temple_bar/meeting_house_square_stop.tres" id="4_3q4gn"]
+[ext_resource type="Resource" uid="uid://dpy0chhvgkx7y" path="res://resources/bus_stops/cabra-philsborough/cross_guns_bridge_stop.tres" id="4_34c2u"]
+[ext_resource type="Resource" uid="uid://tmty0tywi1uv" path="res://resources/bus_stops/cabra-philsborough/dalymount_park_stop.tres" id="5_2w2e6"]
+[ext_resource type="Resource" uid="uid://nx1wkmdro8iq" path="res://resources/bus_stops/cabra-philsborough/blessington_basin_stop.tres" id="6_n55w7"]
+[ext_resource type="Resource" uid="uid://b3ekfmhstbpb3" path="res://resources/bus_stops/cabra-philsborough/broadstone_plaza_stop.tres" id="7_5ytqo"]
+[ext_resource type="Resource" uid="uid://dxpyttbx2os1f" path="res://resources/bus_stops/smithfield-stoneybatter/cobblestone_stop.tres" id="8_txorm"]
+[ext_resource type="Resource" uid="uid://dtpvuddqx0sb8" path="res://resources/bus_stops/north_side/four_courts_stop.tres" id="9_bx1ea"]
 
 [resource]
 script = ExtResource("1_acm6b")
 id = "green_line"
 display_name = "Green Line"
 color = Color(0, 1, 0, 1)
-stops = Array[ExtResource("2_t78o5")]([ExtResource("3_05f2o"), ExtResource("4_3q4gn"), ExtResource("5_ttxjf")])
+stops = Array[ExtResource("2_t78o5")]([ExtResource("3_wn0js"), ExtResource("4_34c2u"), ExtResource("5_2w2e6"), ExtResource("6_n55w7"), ExtResource("7_5ytqo"), ExtResource("8_txorm"), ExtResource("9_bx1ea"), ExtResource("4_3q4gn"), ExtResource("3_05f2o")])
 frequency = 5.0
 travel_time_between_stops = 2.0
 variants = []

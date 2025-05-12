@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="BusStopResource" load_steps=3 format=3 uid="uid://d3f34yl06m4m5"]
+
+[ext_resource type="Script" uid="uid://dyq0mwcsvq2gc" path="res://resources/bus_stops/bus_stop_resource.gd" id="1_dpxtm"]
+[ext_resource type="Resource" uid="uid://di2i6ap3nu7jq" path="res://resources/neighborhoods/phoenix_park.tres" id="1_wbse4"]
+
+[resource]
+script = ExtResource("1_dpxtm")
+id = "phoenix_monument"
+display_name = "Phoenix Monument"
+position = Vector2(0, 0)
+is_landmark = false
+neighborhood = ExtResource("1_wbse4")
+is_starting_point = false
+is_destination_point = false
+metadata/_custom_type_script = "uid://dyq0mwcsvq2gc"

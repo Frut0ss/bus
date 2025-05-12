@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="BusStopResource" load_steps=3 format=3 uid="uid://cb8yid74i47dl"]
 
-[ext_resource type="Resource" uid="uid://c3ir0i5trbijn" path="res://resources/neighborhoods/temple_bar_neighborhood.tres" id="1_5jk4y"]
+[ext_resource type="Resource" uid="uid://c3ir0i5trbijn" path="res://resources/neighborhoods/temple_bar.tres" id="1_5jk4y"]
 [ext_resource type="Script" uid="uid://dyq0mwcsvq2gc" path="res://resources/bus_stops/bus_stop_resource.gd" id="1_mvevi"]
 
 [resource]
@@ -10,6 +10,6 @@ display_name = "Temple Lane"
 position = Vector2(0, 0)
 is_landmark = false
 neighborhood = ExtResource("1_5jk4y")
-is_starting_point = true
+is_starting_point = false
 is_destination_point = false
 metadata/_custom_type_script = "uid://dyq0mwcsvq2gc"
