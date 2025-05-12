@@ -12,8 +12,8 @@ var player_path = null
 # Constants for visualization
 const ROUTE_LINE_WIDTH = 4
 const DEFAULT_LINE_COLOR = Color(0.7, 0.7, 0.7, 0.7)  # Gray with transparency
-const PLAYER_PATH_COLOR = Color(1, 0, 0, 1)  # Fully opaque red
-const PLAYER_PATH_WIDTH = 16  # Much wider than normal routes
+const PLAYER_PATH_COLOR = Color(1, 0, 0, 0.7)  # Fully opaque red
+const PLAYER_PATH_WIDTH = 8  # Much wider than normal routes
 
 # Called when the node enters the scene tree for the first time
 func _ready():
@@ -58,23 +58,29 @@ func connect_stops_to_nodes():
 		else:
 			print("WARNING: No matching node found for stop: " + stop_id)
 
-# Find a node that matches this stop
 func find_matching_node(stop_id, stop_resource):
-	# Try different formats of the name
-	var possible_names = [
-		stop_id.to_lower(),                     # fleet_street
-		stop_id.split("_")[0].to_lower(),       # fleet
-		stop_id.replace("_", "").to_lower(),    # fleetstreet
-		stop_resource.display_name.to_lower().replace(" ", "")  # Fleet Street -> fleetstreet
-	]
+	# Extract just the stop name part from the full ID
+	var parts = stop_id.split("/")
+	var stop_name = parts[1] if parts.size() > 1 else stop_id
 	
-	# Check if any match our node names
-	for name in possible_names:
-		for node_name in map_stop_nodes:
-			if name in node_name or node_name in name:
-				return map_stop_nodes[node_name]
+	# Try to match by exact name first
+	var node_name = stop_name.to_lower().replace("_", " ")
+	if map_stop_nodes.has(node_name):
+		return map_stop_nodes[node_name]
 	
-	# No match found
+	# If that fails, try a fuzzy match
+	for map_node_name in map_stop_nodes.keys():
+		# Try removing _stop suffix if present
+		if stop_name.ends_with("_stop"):
+			var base_name = stop_name.substr(0, stop_name.length() - 5).to_lower().replace("_", " ")
+			if map_node_name == base_name:
+				return map_stop_nodes[map_node_name]
+		
+		# Try other fuzzy matching techniques if needed
+		# e.g., check if the node name is contained within the stop name
+		if map_node_name in stop_name.to_lower().replace("_", " "):
+			return map_stop_nodes[map_node_name]
+	
 	return null
 
 # Setup player visualization elements
@@ -160,8 +166,7 @@ func update_map_display():
 	# Update stop labels
 	for stop_resource in stop_nodes.keys():
 		var node = stop_nodes[stop_resource]
-		if node and node.has_method("set_stop_name"):
-			node.set_stop_name(stop_resource.display_name)
+		node.set_bus_stop_resource(stop_resource)
 	
 	# Update player marker position
 	update_player_marker()

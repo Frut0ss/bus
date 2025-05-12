@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="BusStopResource" load_steps=3 format=3 uid="uid://bvgo4rqawjwp1"]
+
+[ext_resource type="Resource" uid="uid://di2i6ap3nu7jq" path="res://resources/neighborhoods/phoenix_park.tres" id="1_aa63v"]
+[ext_resource type="Script" uid="uid://dyq0mwcsvq2gc" path="res://resources/bus_stops/bus_stop_resource.gd" id="1_wqvlb"]
+
+[resource]
+script = ExtResource("1_wqvlb")
+id = "aras_an_uachtarain"
+display_name = "Aras An Uacthacrain"
+position = Vector2(0, 0)
+is_landmark = false
+neighborhood = ExtResource("1_aa63v")
+is_starting_point = true
+is_destination_point = false
+metadata/_custom_type_script = "uid://dyq0mwcsvq2gc"

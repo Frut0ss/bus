@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="BusStopResource" load_steps=3 format=3 uid="uid://nx1wkmdro8iq"]
+
+[ext_resource type="Resource" uid="uid://c1e3xd18hc8h3" path="res://resources/neighborhoods/cabra-philsborough.tres" id="1_g2m10"]
+[ext_resource type="Script" uid="uid://dyq0mwcsvq2gc" path="res://resources/bus_stops/bus_stop_resource.gd" id="2_muefx"]
+
+[resource]
+script = ExtResource("2_muefx")
+id = "blessington_basin"
+display_name = "Blessington Basin"
+position = Vector2(0, 0)
+is_landmark = false
+neighborhood = ExtResource("1_g2m10")
+is_starting_point = false
+is_destination_point = false
+metadata/_custom_type_script = "uid://dyq0mwcsvq2gc"

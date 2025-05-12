@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="BusStopResource" load_steps=3 format=3 uid="uid://dxpyttbx2os1f"]
+
+[ext_resource type="Resource" uid="uid://b7abld0jiwigo" path="res://resources/neighborhoods/smithfield-stoneybatter.tres" id="1_8r14m"]
+[ext_resource type="Script" uid="uid://dyq0mwcsvq2gc" path="res://resources/bus_stops/bus_stop_resource.gd" id="1_d51mr"]
+
+[resource]
+script = ExtResource("1_d51mr")
+id = "cobblestone"
+display_name = "The CobbleStone"
+position = Vector2(0, 0)
+is_landmark = false
+neighborhood = ExtResource("1_8r14m")
+is_starting_point = false
+is_destination_point = false
+metadata/_custom_type_script = "uid://dyq0mwcsvq2gc"

@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="BusStopResource" load_steps=3 format=3 uid="uid://b44qrkwurwxuq"]
+
+[ext_resource type="Resource" uid="uid://cgekf7pakwy3x" path="res://resources/neighborhoods/north_side.tres" id="1_2ecfg"]
+[ext_resource type="Script" uid="uid://dyq0mwcsvq2gc" path="res://resources/bus_stops/bus_stop_resource.gd" id="1_3tk0j"]
+
+[resource]
+script = ExtResource("1_3tk0j")
+id = "mountjoy_square"
+display_name = "MountJoy Square"
+position = Vector2(0, 0)
+is_landmark = false
+neighborhood = ExtResource("1_2ecfg")
+is_starting_point = false
+is_destination_point = false
+metadata/_custom_type_script = "uid://dyq0mwcsvq2gc"

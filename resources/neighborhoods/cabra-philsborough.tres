@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="NeighborhoodResource" load_steps=2 format=3 uid="uid://c1e3xd18hc8h3"]
+
+[ext_resource type="Script" uid="uid://bnp2qh4oegwey" path="res://resources/neighborhoods/neighborhood_resource.gd" id="1_0gymj"]
+
+[resource]
+script = ExtResource("1_0gymj")
+id = ""
+display_name = "Cabra"
+color = Color(0, 0, 0, 1)
+ambient_sound = ""
+metadata/_custom_type_script = "uid://bnp2qh4oegwey"

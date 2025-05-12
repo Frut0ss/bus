@@ -10,33 +10,89 @@
 script = ExtResource("1_3c4m5")
 
 [node name="Background" type="Sprite2D" parent="."]
-position = Vector2(960, 548)
+position = Vector2(968, 472)
+scale = Vector2(2.44719, 2.44719)
 texture = ExtResource("6_exaij")
 
-[node name="PlayerMarker" type="Node2D" parent="Background"]
-z_index = 10
-
-[node name="Sprite2D" type="Sprite2D" parent="Background/PlayerMarker"]
-position = Vector2(0, -33)
-scale = Vector2(0.543478, 0.543478)
-texture = ExtResource("3_2b48g")
-
 [node name="Fleet Street" parent="Background" groups=["map_stops"] instance=ExtResource("7_pbivx")]
-position = Vector2(-110, -329)
+position = Vector2(-113.6, 13.4849)
 
 [node name="Temple Lane" parent="Background" groups=["map_stops"] instance=ExtResource("7_pbivx")]
-position = Vector2(263, -253)
+position = Vector2(-150.377, 13.8935)
 
 [node name="Meeting House Square" parent="Background" groups=["map_stops"] instance=ExtResource("7_pbivx")]
-position = Vector2(-555, -51)
+position = Vector2(-182.25, 13.4849)
 
 [node name="Dame Street" parent="Background" groups=["map_stops"] instance=ExtResource("7_pbivx")]
-position = Vector2(-187, 82)
+position = Vector2(-181.842, 44.541)
+
+[node name="Cobblestone" parent="Background" groups=["map_stops"] instance=ExtResource("7_pbivx")]
+position = Vector2(-182.25, -34.3251)
+
+[node name="Smithfield Square" parent="Background" groups=["map_stops"] instance=ExtResource("7_pbivx")]
+position = Vector2(-200.638, 1.2259)
+
+[node name="Hay Market Square" parent="Background" groups=["map_stops"] instance=ExtResource("7_pbivx")]
+position = Vector2(-149.56, -34.7338)
+
+[node name="Collins Barrack" parent="Background" groups=["map_stops"] instance=ExtResource("7_pbivx")]
+position = Vector2(-221.887, 1.63453)
+
+[node name="Aras An Uachtarain" parent="Background" groups=["map_stops"] instance=ExtResource("7_pbivx")]
+position = Vector2(-292.172, -66.6071)
+
+[node name="Wellington Monument" parent="Background" groups=["map_stops"] instance=ExtResource("7_pbivx")]
+position = Vector2(-241.91, -3.67768)
+
+[node name="Zoo Entrance" parent="Background" groups=["map_stops"] instance=ExtResource("7_pbivx")]
+position = Vector2(-356.736, -67.4244)
+
+[node name="Bernard Shaw" parent="Background" groups=["map_stops"] instance=ExtResource("7_pbivx")]
+position = Vector2(-183.067, -105.836)
+
+[node name="Blessington Basin" parent="Background" groups=["map_stops"] instance=ExtResource("7_pbivx")]
+position = Vector2(-182.658, -53.9394)
+
+[node name="Broadstone Plaza" parent="Background" groups=["map_stops"] instance=ExtResource("7_pbivx")]
+position = Vector2(-182.658, -44.1323)
+
+[node name="Cross Guns Bridge" parent="Background" groups=["map_stops"] instance=ExtResource("7_pbivx")]
+position = Vector2(-182.659, -90.3078)
+
+[node name="Dalymount Park" parent="Background" groups=["map_stops"] instance=ExtResource("7_pbivx")]
+position = Vector2(-182.658, -71.102)
+
+[node name="Four Courts" parent="Background" groups=["map_stops"] instance=ExtResource("7_pbivx")]
+position = Vector2(-182.25, 1.2259)
+
+[node name="Henry Street" parent="Background" groups=["map_stops"] instance=ExtResource("7_pbivx")]
+position = Vector2(-112.782, -21.6575)
+
+[node name="MountJoy Square" parent="Background" groups=["map_stops"] instance=ExtResource("7_pbivx")]
+position = Vector2(-76.8228, -36.7769)
+
+[node name="O Connell Bridge" parent="Background" groups=["map_stops"] instance=ExtResource("7_pbivx")]
+position = Vector2(-112.782, 1.22589)
+
+[node name="Parnell Street" parent="Background" groups=["map_stops"] instance=ExtResource("7_pbivx")]
+position = Vector2(-113.191, -35.9596)
+
+[node name="Phoenix Monument" parent="Background" groups=["map_stops"] instance=ExtResource("7_pbivx")]
+position = Vector2(-325.68, -66.607)
 
 [node name="DestinationMarker" type="Node2D" parent="Background"]
 position = Vector2(299, -34)
 
 [node name="Sprite2D" type="Sprite2D" parent="Background/DestinationMarker"]
-position = Vector2(0, -40)
-scale = Vector2(0.62605, 0.62605)
+position = Vector2(0.527676, -11.7669)
+scale = Vector2(0.18909, 0.18909)
 texture = ExtResource("5_s1kpw")
+
+[node name="PlayerMarker" type="Node2D" parent="Background"]
+z_index = 10
+position = Vector2(142.613, 13.8935)
+
+[node name="Sprite2D" type="Sprite2D" parent="Background/PlayerMarker"]
+position = Vector2(0.817275, -17.9798)
+scale = Vector2(0.276181, 0.276181)
+texture = ExtResource("3_2b48g")
