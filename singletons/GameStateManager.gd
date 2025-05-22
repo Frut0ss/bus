@@ -34,10 +34,10 @@ func _process(_delta):
 					change_to_state(GameState.BUS_STOP)
 					
 		# If the player is at the BUS_STOP screen (choosing a bus stop)
-		GameState.BUS_STOP:
-			if Input.is_action_just_pressed("click"):
-				# Move to the INTERIOR_BUS state when the player clicks (simulating boarding the bus)
-				change_to_state(GameState.INTERIOR_BUS)
+		#GameState.BUS_STOP:
+			#if Input.is_action_just_pressed("click"):
+				## Move to the INTERIOR_BUS state when the player clicks (simulating boarding the bus)
+				#change_to_state(GameState.INTERIOR_BUS)
 				
 		# If the player is inside the bus (INTERIOR_BUS state)
 		GameState.INTERIOR_BUS:

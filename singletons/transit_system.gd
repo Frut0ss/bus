@@ -14,10 +14,12 @@ var bus_stops = {}
 var bus_lines = {}
 var bus_line_variants = {}
 var stop_id
+var travel_direction = 1
 
 signal destination_reached(stop_resource)
 signal bus_stop_changed(new_stop)
 signal stop_data_updated(stop_id)
+signal direction_changed(new_direction)
 
 # Called when the node enters the scene tree
 func _ready():
@@ -171,11 +173,12 @@ func advance_to_next_stop():
 		print("Error: Can't advance - no active bus line or stops")
 		return true
 	
-	current_stop_index += 1
+	current_stop_index += travel_direction
 	
 	# Safety check to avoid index out of bounds
-	if current_stop_index < active_route_stops.size():
+	if current_stop_index >= 0 and current_stop_index < active_route_stops.size():
 		current_bus_stop = active_route_stops[current_stop_index]
+		add_visited_stop(current_bus_stop)
 		emit_signal("bus_stop_changed", current_bus_stop)
 		
 		# Check if we've reached a destination
@@ -240,7 +243,6 @@ func check_destination_reached():
 		return false
 		
 	if current_bus_stop.is_destination_point:
-		print("Destination reached!")
 		# Emit a signal that other systems can listen for
 		emit_signal("destination_reached", current_bus_stop)
 		return true
@@ -251,7 +253,58 @@ func add_visited_stop(stop_resource):
 	# Only add if not already the last stop
 	if visited_stops.size() == 0 or visited_stops[-1] != stop_resource:
 		visited_stops.append(stop_resource)
-		print("TransitSystem: Added visited stop: " + stop_resource.display_name)
-		print("TransitSystem: Total visited stops: " + str(visited_stops.size()))
+
+
+func set_direction(direction):
+	# Validate direction is either 1 (forward) or -1 (backward)
+	if direction != 1 and direction != -1:
+		print("Error: Invalid direction value. Must be 1 or -1.")
+		return
+		
+	travel_direction = direction
+	emit_signal("direction_changed", direction)
+	print("Direction set to: " + ("Forward" if direction == 1 else "Backward"))
+
+
+func toggle_direction():
+	# Debug: Print state before toggling
+	print("TOGGLE DIRECTION: Before toggle - direction = " + str(travel_direction))
+	print("TOGGLE DIRECTION: Active bus line = " + (active_bus_line.display_name if active_bus_line else "NONE"))
+	if active_route_stops.size() > 0:
+		print("TOGGLE DIRECTION: First stop = " + active_route_stops[0].display_name)
+		print("TOGGLE DIRECTION: Last stop = " + active_route_stops[active_route_stops.size() - 1].display_name)
 	else:
-		print("Couldn't add visited stop")
+		print("TOGGLE DIRECTION: No stops in active_route_stops!")
+		
+	# Switch between forward and backward
+	travel_direction = -travel_direction
+	
+	# Debug: Print state after toggling
+	print("TOGGLE DIRECTION: After toggle - direction = " + str(travel_direction))
+	
+	# Emit signal
+	emit_signal("direction_changed", travel_direction)
+
+
+func get_direction_terminus(bus_line = null):
+	# If no bus_line is provided, use the active_bus_line (existing behavior)
+	var line_to_use = bus_line if bus_line != null else active_bus_line
+	
+	if not line_to_use or not line_to_use.stops or line_to_use.stops.size() == 0:
+		return "Unknown"
+		
+	# Forward direction (last stop)
+	if travel_direction == 1:
+		return line_to_use.stops[line_to_use.stops.size() - 1].display_name
+	# Backward direction (first stop)
+	else:
+		return line_to_use.stops[0].display_name
+
+func is_at_terminus():
+	if not active_bus_line or active_route_stops.size() == 0:
+		return false
+		
+	if travel_direction == 1:
+		return current_stop_index == active_route_stops.size() - 1
+	else:
+		return current_stop_index == 0

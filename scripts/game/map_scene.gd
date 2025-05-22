@@ -22,7 +22,6 @@ func _ready():
 		if child.is_in_group("map_stops") or "stop" in child.name.to_lower():
 			var node_name = child.name.to_lower()
 			map_stop_nodes[node_name] = child
-			print("Found map node: " + node_name)
 	
 	# Now connect each stop resource to its visual node
 	connect_stops_to_nodes()
@@ -54,7 +53,6 @@ func connect_stops_to_nodes():
 		if matched_node:
 			# Connect resource to node
 			stop_nodes[stop_resource] = matched_node
-			print("Connected stop resource '" + stop_id + "' to node")
 		else:
 			print("WARNING: No matching node found for stop: " + stop_id)
 
