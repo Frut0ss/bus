@@ -24,7 +24,7 @@ func _ready():
 	timer.timeout.connect(_on_timer_timeout)
 	timer.start()
 	
-# Replace the schedule_final_stop_disembark function with this approach
+
 func setup_upcoming_stops():
 	upcoming_stops.clear()
 	stops_spawned = 0
@@ -36,28 +36,40 @@ func setup_upcoming_stops():
 		# Get the current stop index from TransitSystem
 		var current_index = TransitSystem.current_stop_index
 		print("Current stop index: " + str(current_index))
+		print("Travel direction: " + ("Forward" if TransitSystem.travel_direction == 1 else "Backward"))
 		
 		# First, always add the current stop to show where we are
 		if current_index >= 0 and current_index < TransitSystem.active_route_stops.size():
 			upcoming_stops.append(TransitSystem.active_route_stops[current_index])
 			print("Added current stop: " + TransitSystem.active_route_stops[current_index].display_name)
 			
-			# Add all stops after the current one
-			for i in range(current_index + 1, TransitSystem.active_route_stops.size()):
-				upcoming_stops.append(TransitSystem.active_route_stops[i])
-				print("Added upcoming stop: " + TransitSystem.active_route_stops[i].display_name)
+			# Add stops based on direction
+			if TransitSystem.travel_direction == 1:
+				# Going FORWARD - add stops after current index
+				for i in range(current_index + 1, TransitSystem.active_route_stops.size()):
+					upcoming_stops.append(TransitSystem.active_route_stops[i])
+					print("Added upcoming stop (forward): " + TransitSystem.active_route_stops[i].display_name)
+			else:
+				# Going BACKWARD - add stops before current index (in reverse order)
+				for i in range(current_index - 1, -1, -1):
+					upcoming_stops.append(TransitSystem.active_route_stops[i])
+					print("Added upcoming stop (backward): " + TransitSystem.active_route_stops[i].display_name)
 			
 			print("Added " + str(upcoming_stops.size()) + " total stops")
 			
-			# If we're at the last stop, immediately disembark
-			if current_index == TransitSystem.active_route_stops.size() - 1:
-				print("At the last stop of the line - will auto-disembark")
+			# Check if we're already at a terminus
+			var at_terminus = false
+			if TransitSystem.travel_direction == 1 and current_index == TransitSystem.active_route_stops.size() - 1:
+				at_terminus = true
+				print("At the end of the line (forward) - will auto-disembark")
+			elif TransitSystem.travel_direction == -1 and current_index == 0:
+				at_terminus = true
+				print("At the beginning of the line (backward) - will auto-disembark")
+			
+			if at_terminus:
 				call_deferred("auto_disembark")
 		else:
-			# If the current index is invalid, use all stops
-			for stop in TransitSystem.active_route_stops:
-				upcoming_stops.append(stop)
-			print("Current index invalid, using all bus line stops")
+			print("Current index invalid: " + str(current_index))
 	else:
 		# Fallback if no bus line is active
 		print("No active bus line, cannot determine upcoming stops")
@@ -204,7 +216,7 @@ func _on_timer_timeout():
 
 func update_disembark_ui():
 	var can_disembark = false
-	var is_last_stop = false
+	var is_terminus_stop = false
 	var current_stop_name = ""
 	
 	# Check all bus stops in the scene
@@ -214,20 +226,42 @@ func update_disembark_ui():
 			can_disembark = true
 			current_stop_name = stop.stop_resource.display_name
 			
-			# Check if this is the last stop in the active route
+			# Check if this is a terminus stop based on travel direction
 			if TransitSystem.active_route_stops.size() > 0:
+				var is_end_terminus = false
+				var is_start_terminus = false
+				
+				# Check if this is the last stop (forward terminus)
 				var last_stop = TransitSystem.active_route_stops[TransitSystem.active_route_stops.size() - 1]
 				if stop.stop_resource.display_name == last_stop.display_name:
-					is_last_stop = true
+					is_end_terminus = true
+				
+				# Check if this is the first stop (backward terminus)
+				var first_stop = TransitSystem.active_route_stops[0]
+				if stop.stop_resource.display_name == first_stop.display_name:
+					is_start_terminus = true
+				
+				# Determine if we should auto-disembark based on direction
+				if TransitSystem.travel_direction == 1 and is_end_terminus:
+					# Going forward and reached the end
+					is_terminus_stop = true
+					print("Reached forward terminus: " + current_stop_name)
+				elif TransitSystem.travel_direction == -1 and is_start_terminus:
+					# Going backward and reached the beginning
+					is_terminus_stop = true
+					print("Reached backward terminus: " + current_stop_name)
 			
 			if next_stop_label:
-				if is_last_stop:
-					next_stop_label.text = "End of line: " + current_stop_name
+				if is_terminus_stop:
+					var direction_name = "forward" if TransitSystem.travel_direction == 1 else "backward"
+					next_stop_label.text = "End of line (" + direction_name + "): " + current_stop_name
 					# Trigger auto-disembark
 					call_deferred("auto_disembark")
 				else:
 					next_stop_label.text = "Press Q to disembark at " + current_stop_name
 				next_stop_label.visible = true
+			
+			break  # Only process one stop at a time
 	
 	# Hide the label if no stop is in range
 	if !can_disembark and next_stop_label:
@@ -252,10 +286,23 @@ func update_current_stop_position():
 							TransitSystem.current_bus_stop = current_stop_resource
 							print("Updated current stop to: " + current_stop_resource.display_name + " (index: " + str(i) + ")")
 							TransitSystem.add_visited_stop(TransitSystem.current_bus_stop)
-							# Check if this is the last stop in the active route
-							var last_index = TransitSystem.active_route_stops.size() - 1
-							if i == last_index:
-								print("Reached the end of the line!")
+							
+							# Check if this is a terminus based on direction
+							var reached_terminus = false
+							
+							if TransitSystem.travel_direction == 1:
+								# Going forward - check if we're at the last stop
+								var last_index = TransitSystem.active_route_stops.size() - 1
+								if i == last_index:
+									print("Reached the end of the line (forward)!")
+									reached_terminus = true
+							else:
+								# Going backward - check if we're at the first stop
+								if i == 0:
+									print("Reached the beginning of the line (backward)!")
+									reached_terminus = true
+							
+							if reached_terminus:
 								call_deferred("auto_disembark")
 			break  # Only process one stop at a time
 

@@ -11,10 +11,12 @@ var is_leaving = false
 @onready var sitting_position: Marker2D = $SittingPosition
 @onready var boarding_position: Marker2D = $BoardingPosition
 @onready var animation_player: AnimationPlayer = $AnimationPlayer
-
+@onready var direction_label: Label = $DirectionLabel
 @onready var line_label: Label = $LineLabel
 
 var bus_line = null
+var direction_text = "Towards: Unknown"
+
 
 func _ready():
 	# Create the timer programmatically
@@ -109,25 +111,44 @@ func _on_body_exited(body):
 		display_boarding_prompt(false)
 
 func display_boarding_prompt(display):
-	# Get the current stop from the parent (bus_stop scene)
-	var current_stop = TransitSystem.current_bus_stop
-	
 	if display:
-		# Always check if this is end of line when showing prompt
-		var is_end_of_line = false
-		if current_stop and bus_line:
-			is_end_of_line = TransitSystem.is_end_of_line(current_stop, bus_line)
-		
-		if is_end_of_line:
-			print("End of line - Can't board this bus: " + bus_line.display_name)
-			# Grey out the bus to indicate it can't be boarded
-			modulate = Color(0.7, 0.0, 0.0, 0.5)  # Red tint with transparency
-		else:
-			print("Press E to board the bus")
+		if can_player_board():
+			print("Press E to board the bus - " + bus_line.display_name + " " + direction_text)
 			modulate = Color(1.0, 1.0, 1.0)  # Normal color
+		else:
+			# Check why we can't board
+			var current_stop = TransitSystem.current_bus_stop
+			if current_stop and bus_line:
+				var current_stop_index = -1
+				for i in range(bus_line.stops.size()):
+					if bus_line.stops[i].display_name == current_stop.display_name:
+						current_stop_index = i
+						break
+				
+				if current_stop_index != -1:
+					var direction_name = "forward" if TransitSystem.travel_direction == 1 else "backward"
+					var at_terminus = false
+					
+					if TransitSystem.travel_direction == 1 and current_stop_index == bus_line.stops.size() - 1:
+						at_terminus = true
+					elif TransitSystem.travel_direction == -1 and current_stop_index == 0:
+						at_terminus = true
+					
+					if at_terminus:
+						print("Cannot board " + bus_line.display_name + " - already at " + direction_name + " terminus")
+						modulate = Color(0.7, 0.7, 0.7, 0.8)  # Grayed out
+					else:
+						print("Cannot board " + bus_line.display_name + " - direction issue")
+						modulate = Color(0.8, 0.8, 0.8, 0.8)  # Slightly grayed
+				else:
+					print("Cannot board " + bus_line.display_name + " - stop not found in line")
+					modulate = Color(0.7, 0.0, 0.0, 0.8)  # Red tint
+			else:
+				print("Cannot board - missing bus line or current stop data")
+				modulate = Color(0.7, 0.0, 0.0, 0.8)  # Red tint
 	else:
 		print("Boarding prompt hidden")
-		modulate = Color(1.0, 1.0, 1.0)  # Reset to normal color
+		modulate = Color(1.0, 1.0, 1.0)  # Reset to normal colorr
 		
 func display_bus_line(line_name):
 	print("Attempting to display line name: " + line_name)
@@ -170,21 +191,46 @@ func board_player(player_node):
 
 
 func can_player_board():
-	# Player can only board if:
-	# 1. They are in range of the bus
-	# 2. The bus is at a stop
-	# 3. The stop is not the end of the line for this bus
+	if not (player_in_range and at_bus_stop and bus_line):
+		return false
 	
-	# Check if this is the end of the line
-	var is_end = false
-	if at_bus_stop and bus_line:
-		var current_stop = TransitSystem.current_bus_stop
-		is_end = TransitSystem.is_end_of_line(current_stop, bus_line)
+	var current_stop = TransitSystem.current_bus_stop
+	if not current_stop:
+		return false
 	
-	return player_in_range and at_bus_stop and not is_end
+	# Find the current stop's position in this bus line
+	var current_stop_index = -1
+	for i in range(bus_line.stops.size()):
+		if bus_line.stops[i].display_name == current_stop.display_name:
+			current_stop_index = i
+			break
+	
+	if current_stop_index == -1:
+		print("Current stop not found in bus line: " + bus_line.display_name)
+		return false
+	
+	# Check if we can travel in the current direction
+	var can_travel = false
+	
+	if TransitSystem.travel_direction == 1:
+		# Going forward - check if there are stops ahead
+		can_travel = current_stop_index < bus_line.stops.size() - 1
+	else:
+		# Going backward - check if there are stops behind
+		can_travel = current_stop_index > 0
+	
+	if not can_travel:
+		print("Cannot board " + bus_line.display_name + " - no stops in " + 
+			  ("forward" if TransitSystem.travel_direction == 1 else "backward") + " direction")
+	
+	return can_travel
 
 func _on_player_animation_finished(anim_name):
 	print("Player animation finished:", anim_name)
 	# Start the bus moving again
 	at_bus_stop = false
 	is_leaving = true
+
+func set_direction_text(text):
+	direction_text = text
+	direction_label.text = direction_text
