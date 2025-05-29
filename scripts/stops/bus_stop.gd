@@ -8,9 +8,11 @@ extends Node2D
 @onready var direction_label: Label = $DirectionLabel
 @onready var direction_button: Button = $DirectionButton
 
+
 # UI elements (you'll need to add these to your scene)
 @onready var stop_name_label = $StopNameLabel
 @onready var neighborhood_label = $NeighborhoodLabel
+@onready var bus_stop_audio: AudioStreamPlayer2D = $BusStopAudio
 
 var active_buses = []
 var current_bus_stop = null
@@ -61,11 +63,15 @@ func _ready():
 func _process(_delta):
 	# Check if any buses have reached the despawn position
 	for bus in active_buses:
-		if bus != null and bus.position.x <= bus_despawn_position.position.x:
-			remove_bus(bus)
-		if bus.can_player_board() and Input.is_action_pressed("Embark"):
-			board_player(bus)
-			break
+		if bus != null:
+			# Check if bus passed without stopping
+			if bus.position.x <= bus_despawn_position.position.x:
+				remove_bus(bus)
+			
+			# Handle boarding for stopped buses
+			if bus.can_player_board() and bus.at_bus_stop and Input.is_action_pressed("Embark"):
+				board_player(bus)
+				break
 
 func update_bus_stop_display():
 	if current_bus_stop:
@@ -79,18 +85,10 @@ func update_bus_stop_display():
 		update_direction_display()
 		# You could also update the background or other visual elements
 		# based on the neighborhood or other properties
-		print("Now at bus stop: " + current_bus_stop.display_name)
-	else:
-		print("No current bus stop set!")
 
 # Modify the update_direction_display function in bus_stop.gd
 
 func update_direction_display():
-	print("Updating direction display...")
-	
-	if not direction_label:
-		print("ERROR: No direction label found!")
-		return
 	
 	# Check what directions are available
 	var available_directions = check_available_directions()
@@ -100,12 +98,8 @@ func update_direction_display():
 		var current_direction_valid = true
 		
 		if TransitSystem.travel_direction == 1 and not available_directions.forward:
-			# Currently set to forward but can't go forward - force backward
-			print("Forcing direction to backward: " + available_directions.reason)
 			TransitSystem.travel_direction = -1
 		elif TransitSystem.travel_direction == -1 and not available_directions.backward:
-			# Currently set to backward but can't go backward - force forward  
-			print("Forcing direction to forward: " + available_directions.reason)
 			TransitSystem.travel_direction = 1
 		
 		# Disable button if only one direction is possible
@@ -122,15 +116,12 @@ func update_direction_display():
 				direction_button.text = "No Travel"
 	
 	if not TransitSystem.active_bus_line:
-		print("No active bus line when updating direction display")
 		
 		# Set a fallback active line if possible
 		if current_bus_stop and not current_bus_stop.connected_lines.is_empty():
 			var bus_line = current_bus_stop.connected_lines[0]
-			print("Setting fallback active bus line to: " + bus_line.display_name)
 			TransitSystem.set_active_bus_line(bus_line)
 		else:
-			print("Cannot set fallback active bus line - showing default terminus")
 			direction_label.text = "Towards: End of Line"
 			return
 	
@@ -154,6 +145,7 @@ func _on_bus_stop_changed(new_stop):
 func board_player(bus):
 	var player = character_player
 	if player:
+		player.start_boarding()
 		bus.board_player(player)
 		
 		# Store the bus line in TransitSystem
@@ -223,6 +215,7 @@ func spawn_bus():
 		
 		# Add the bus to the scene
 		add_child(new_bus)
+		#play_bus_arrival()
 		var direction_text = "Towards: " + TransitSystem.get_direction_terminus(bus_line)
 		new_bus.set_direction_text(direction_text)
 		
@@ -344,3 +337,17 @@ func check_available_directions():
 		"backward": can_go_backward,
 		"reason": restriction_reason
 	}
+
+
+
+func play_bus_arrival():
+	bus_stop_audio.stream = load("res://assets/audio/bus.ogg")
+	bus_stop_audio.play()
+
+func play_stop_announcement():
+	bus_stop_audio.stream = load("res://assets/audio/bus_stop_announcement.ogg")
+	bus_stop_audio.play()
+
+func play_boarding_beep():
+	bus_stop_audio.stream = load("res://assets/audio/beepbeeppediastrian.ogg")
+	bus_stop_audio.play()

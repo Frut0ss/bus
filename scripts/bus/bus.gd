@@ -1,6 +1,6 @@
 extends Area2D
 # Bus properties
-@export var speed = 700  # Pixels per second
+@export var speed = 2000  # Pixels per second
 var bus_stop_position_x = 0
 var at_bus_stop = false
 var stop_timer: Timer
@@ -48,25 +48,31 @@ func _process(delta):
 			if not player_in_range:
 				player_in_range = true
 				
-				# Show boarding prompt if at bus stop
-				if at_bus_stop:
-					display_boarding_prompt(true)
+				# Show boarding prompt when player is in range
+				display_boarding_prompt(true)
 	
 	# Check if player was in range but is no longer found
 	if player_in_range and not player_found:
 		player_in_range = false
 		display_boarding_prompt(false)
+
 	if not at_bus_stop:
 		# Move the bus leftward when not at a stop
 		position.x -= speed * delta
 		
-		# Check if we've reached the bus stop position
-		if position.x <= bus_stop_position_x + 10 and position.x >= bus_stop_position_x - 10:
-			# Bus has reached the stop
+		# Check if player wants to board (signal the bus)
+		if player_in_range and Input.is_action_just_pressed("Embark"):
+			# Player signaled - stop the bus
 			arrive_at_stop()
-		if player != null and is_leaving and position.x < -200:  # Adjust value based on bus size
-			is_leaving = false
-			GameStateManager.change_to_state(GameStateManager.GameState.INTERIOR_BUS)
+		
+		# If bus passes the stop without being signaled, continue moving
+		if position.x < bus_stop_position_x - 200:  # Bus has passed the stop
+			# Continue to despawn position
+			pass
+			
+	if player != null and is_leaving and position.x < -200:
+		is_leaving = false
+		GameStateManager.change_to_state(GameStateManager.GameState.INTERIOR_BUS)
 
 func arrive_at_stop():
 	# Snap to exact position to avoid jitter
@@ -78,6 +84,8 @@ func arrive_at_stop():
 	
 	# Start the stop timer
 	stop_timer.start()
+	
+	print("Bus stopped - player signaled successfully!")
 
 func _on_stop_timer_timeout() -> void:
 	# Resume movement
@@ -113,7 +121,7 @@ func _on_body_exited(body):
 func display_boarding_prompt(display):
 	if display:
 		if can_player_board():
-			print("Press E to board the bus - " + bus_line.display_name + " " + direction_text)
+			print("Press E to signal the bus - " + bus_line.display_name + " " + direction_text)
 			modulate = Color(1.0, 1.0, 1.0)  # Normal color
 		else:
 			# Check why we can't board

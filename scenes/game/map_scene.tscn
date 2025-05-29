@@ -1,10 +1,14 @@
-[gd_scene load_steps=6 format=3 uid="uid://daxgvw001lgr1"]
+[gd_scene load_steps=7 format=3 uid="uid://daxgvw001lgr1"]
 
 [ext_resource type="Script" uid="uid://qj61t1lp5vmm" path="res://scripts/game/map_scene.gd" id="1_3c4m5"]
 [ext_resource type="Texture2D" uid="uid://fbfespeg4uhf" path="res://assets/map/1x/YouAreHere.png" id="3_2b48g"]
 [ext_resource type="Texture2D" uid="uid://cfhkofpwkyaa0" path="res://assets/map/1x/WinFlag.png" id="5_s1kpw"]
 [ext_resource type="Texture2D" uid="uid://bygg7cyssdr4v" path="res://assets/map/1x/Background.png" id="6_exaij"]
 [ext_resource type="PackedScene" uid="uid://bwxt6yk4hjcjb" path="res://scenes/stops/map_stop.tscn" id="7_pbivx"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_s1kpw"]
+font_size = 96
+font_color = Color(1, 0.572549, 0, 1)
 
 [node name="MapScene" type="Node2D"]
 script = ExtResource("1_3c4m5")
@@ -96,3 +100,23 @@ position = Vector2(142.613, 13.8935)
 position = Vector2(0.817275, -17.9798)
 scale = Vector2(0.276181, 0.276181)
 texture = ExtResource("3_2b48g")
+
+[node name="MapViewTimer" type="Timer" parent="."]
+wait_time = 5.0
+one_shot = true
+autostart = true
+
+[node name="TimerLabel" type="Label" parent="."]
+offset_left = 773.0
+offset_top = -2.0
+offset_right = 937.0
+offset_bottom = 168.0
+text = "5"
+label_settings = SubResource("LabelSettings_s1kpw")
+horizontal_alignment = 1
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
+position = Vector2(773, -2)
+bus = &"Ambience"
+
+[connection signal="timeout" from="MapViewTimer" to="." method="_on_map_view_timer_timeout"]
