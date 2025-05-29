@@ -28,10 +28,9 @@ position = Vector2(-730, 612)
 position = Vector2(954, 606)
 
 [node name="BusSpawnTimer" type="Timer" parent="."]
-wait_time = 2.5
+wait_time = 2.0
 
 [node name="BoardingWindowTimer" type="Timer" parent="."]
-wait_time = 2.0
 one_shot = true
 autostart = true
 
@@ -60,6 +59,9 @@ offset_top = 968.0
 offset_right = 187.0
 offset_bottom = 1009.0
 text = "Change direction"
+
+[node name="BusStopAudio" type="AudioStreamPlayer2D" parent="."]
+bus = &"SFX"
 
 [connection signal="timeout" from="BusSpawnTimer" to="." method="_on_bus_spawn_timer_timeout"]
 [connection signal="timeout" from="BoardingWindowTimer" to="." method="_on_boarding_window_timer_timeout"]

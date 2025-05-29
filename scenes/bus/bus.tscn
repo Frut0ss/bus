@@ -4,17 +4,16 @@
 [ext_resource type="Texture2D" uid="uid://qhe3oyn0yvmd" path="res://assets/bus_stop/1x/BusVector.png" id="2_ilbd7"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_stnsb"]
-size = Vector2(300, 500.5)
+size = Vector2(1601, 148.125)
 
 [node name="Bus" type="Area2D" groups=["bus"]]
 script = ExtResource("1_kksej")
-speed = 1100
 stop_time = 0.8
 metadata/_edit_horizontal_guides_ = [185.0]
 metadata/_edit_vertical_guides_ = [209.0]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(-174, 117.25)
+position = Vector2(-367.5, 295.063)
 shape = SubResource("RectangleShape2D_stnsb")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]

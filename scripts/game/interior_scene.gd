@@ -171,7 +171,9 @@ func handle_disembark():
 	
 	if can_disembark and current_stop_resource:
 		print("Disembarking at: " + current_stop_resource.display_name)
-		
+		var player = get_tree().get_first_node_in_group("player")
+		if player and player.has_method("start_walking"):
+			player.start_walking()
 		# Stop the parallax movement
 		is_moving = false
 		

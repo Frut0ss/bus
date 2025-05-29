@@ -6,6 +6,8 @@ var stop_nodes = {}
 var map_stop_nodes = {}
 @onready var player_marker: Node2D = $Background/PlayerMarker
 @onready var destination_marker: Node2D = $Background/DestinationMarker
+@onready var map_view_timer: Timer = $MapViewTimer
+@onready var timer_label: Label = $TimerLabel
 
 var player_path = null
 
@@ -40,6 +42,15 @@ func _ready():
 	
 	# Print debug info
 	print("Map scene initialized with " + str(stop_nodes.size()) + " stops")
+
+func _process(delta: float) -> void:
+	if map_view_timer and timer_label:
+		var time_left = int(map_view_timer.time_left)
+		timer_label.text = str(time_left)
+		
+		# Flash red when time is running out
+		if time_left <= 2:
+			timer_label.modulate = Color.RED
 
 # Connect stop resources to their visual nodes
 func connect_stops_to_nodes():
@@ -235,3 +246,7 @@ func _on_bus_stop_changed(new_stop):
 	
 	# Update the map display to reflect the new stop
 	update_map_display()
+
+
+func _on_map_view_timer_timeout() -> void:
+	GameStateManager.change_to_state(GameStateManager.GameState.BUS_STOP)
