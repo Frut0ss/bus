@@ -1,8 +1,11 @@
-[gd_scene load_steps=5 format=3 uid="uid://bti3t0uamplla"]
+[gd_scene load_steps=8 format=3 uid="uid://bti3t0uamplla"]
 
 [ext_resource type="Script" uid="uid://b6mt0hmrgf070" path="res://scripts/stops/bus_stop.gd" id="1_6ul46"]
 [ext_resource type="Texture2D" uid="uid://r7oatlfq20aa" path="res://assets/bus_stop/1x/Background.png" id="2_5r4f1"]
 [ext_resource type="PackedScene" uid="uid://4ngfelrrcq6c" path="res://scenes/player/character_player.tscn" id="3_8fvjs"]
+[ext_resource type="Texture2D" uid="uid://ckysdxcviwrv7" path="res://assets/bus_stop/1x/tree.png" id="3_y5pks"]
+[ext_resource type="Texture2D" uid="uid://ddxk0qsjdwsrs" path="res://assets/bus_stop/1x/bus_stop_object.png" id="4_avr11"]
+[ext_resource type="Texture2D" uid="uid://b15uk31mfb132" path="res://assets/bus_stop/1x/yellow_stop.png" id="6_tcfs5"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_6ul46"]
 font_size = 30
@@ -10,13 +13,49 @@ font_size = 30
 [node name="BusStop" type="Node2D"]
 script = ExtResource("1_6ul46")
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
-position = Vector2(960.433, 529)
-scale = Vector2(0.994917, 0.77978)
+[node name="Background" type="Sprite2D" parent="."]
+position = Vector2(972.635, 538.861)
 texture = ExtResource("2_5r4f1")
 
+[node name="Tree5" type="Sprite2D" parent="."]
+position = Vector2(859, 149)
+texture = ExtResource("3_y5pks")
+
+[node name="Tree3" type="Sprite2D" parent="."]
+position = Vector2(192, 177)
+texture = ExtResource("3_y5pks")
+
+[node name="Tree4" type="Sprite2D" parent="."]
+position = Vector2(1292, 214)
+texture = ExtResource("3_y5pks")
+
+[node name="Tree" type="Sprite2D" parent="."]
+position = Vector2(1631, 188)
+texture = ExtResource("3_y5pks")
+
+[node name="Tree2" type="Sprite2D" parent="."]
+position = Vector2(513, 235)
+texture = ExtResource("3_y5pks")
+
+[node name="BusStop" type="Sprite2D" parent="."]
+position = Vector2(892, 465)
+texture = ExtResource("4_avr11")
+
+[node name="StopNameLabel" type="Label" parent="BusStop"]
+offset_left = -33.0
+offset_top = -269.0
+offset_right = 153.0
+offset_bottom = -246.0
+text = "No Stop Set"
+
+[node name="NeighborhoodLabel" type="Label" parent="BusStop"]
+offset_left = -34.0
+offset_top = -242.0
+offset_right = 148.0
+offset_bottom = -219.0
+
 [node name="CharacterPlayer" parent="." instance=ExtResource("3_8fvjs")]
-position = Vector2(721, 894)
+position = Vector2(906, 786)
 
 [node name="BusSpawnPosition" type="Marker2D" parent="."]
 position = Vector2(2467, 601)
@@ -34,19 +73,8 @@ wait_time = 2.0
 one_shot = true
 autostart = true
 
-[node name="StopNameLabel" type="Label" parent="."]
-offset_left = 865.0
-offset_top = 368.0
-offset_right = 983.0
-offset_bottom = 391.0
-
-[node name="NeighborhoodLabel" type="Label" parent="."]
-offset_left = 1004.0
-offset_top = 369.0
-offset_right = 1044.0
-offset_bottom = 392.0
-
 [node name="DirectionLabel" type="Label" parent="."]
+z_index = 100
 offset_right = 432.0
 offset_bottom = 84.0
 text = "Towards: End of Line
@@ -54,6 +82,7 @@ text = "Towards: End of Line
 label_settings = SubResource("LabelSettings_6ul46")
 
 [node name="DirectionButton" type="Button" parent="."]
+z_index = 100
 offset_left = 22.0
 offset_top = 968.0
 offset_right = 187.0
@@ -62,6 +91,10 @@ text = "Change direction"
 
 [node name="BusStopAudio" type="AudioStreamPlayer2D" parent="."]
 bus = &"SFX"
+
+[node name="YellowStop" type="Sprite2D" parent="."]
+position = Vector2(1423, 357)
+texture = ExtResource("6_tcfs5")
 
 [connection signal="timeout" from="BusSpawnTimer" to="." method="_on_bus_spawn_timer_timeout"]
 [connection signal="timeout" from="BoardingWindowTimer" to="." method="_on_boarding_window_timer_timeout"]

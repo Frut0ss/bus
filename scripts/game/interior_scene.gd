@@ -7,6 +7,7 @@ extends Node2D
 @onready var container: Node2D = $StopsContainer
 @onready var timer: Timer = $Timer
 @onready var next_stop_label: Label = $NextStopLabel
+@onready var city_spawner: Node2D = $CitySpawner
 
 var is_moving = true
 var time_since_last_spawn = 0.0
@@ -21,6 +22,13 @@ func _ready():
 	if next_stop_label:
 		next_stop_label.visible = false
 	
+	if city_spawner:
+		city_spawner.move_speed = scroll_speed
+
+	if city_spawner and city_spawner.has_method("pause_spawning"):
+	# City spawner is ready to receive commands
+		pass
+	
 	timer.timeout.connect(_on_timer_timeout)
 	timer.start()
 	
@@ -31,29 +39,23 @@ func setup_upcoming_stops():
 	
 	# Check if we have an active bus line
 	if TransitSystem.active_bus_line and TransitSystem.active_route_stops.size() > 0:
-		print("Using stops from active bus line: " + TransitSystem.active_bus_line.display_name)
 		
 		# Get the current stop index from TransitSystem
 		var current_index = TransitSystem.current_stop_index
-		print("Current stop index: " + str(current_index))
-		print("Travel direction: " + ("Forward" if TransitSystem.travel_direction == 1 else "Backward"))
 		
 		# First, always add the current stop to show where we are
 		if current_index >= 0 and current_index < TransitSystem.active_route_stops.size():
 			upcoming_stops.append(TransitSystem.active_route_stops[current_index])
-			print("Added current stop: " + TransitSystem.active_route_stops[current_index].display_name)
 			
 			# Add stops based on direction
 			if TransitSystem.travel_direction == 1:
 				# Going FORWARD - add stops after current index
 				for i in range(current_index + 1, TransitSystem.active_route_stops.size()):
 					upcoming_stops.append(TransitSystem.active_route_stops[i])
-					print("Added upcoming stop (forward): " + TransitSystem.active_route_stops[i].display_name)
 			else:
 				# Going BACKWARD - add stops before current index (in reverse order)
 				for i in range(current_index - 1, -1, -1):
 					upcoming_stops.append(TransitSystem.active_route_stops[i])
-					print("Added upcoming stop (backward): " + TransitSystem.active_route_stops[i].display_name)
 			
 			print("Added " + str(upcoming_stops.size()) + " total stops")
 			
@@ -88,7 +90,7 @@ func schedule_final_stop_disembark():
 	final_stop_tracker.connect("timeout", Callable(self, "auto_disembark"))
 	add_child(final_stop_tracker)
 	final_stop_tracker.start()
-	print("Scheduled disembark at final stop")
+
 
 func _process(delta): 
 	if is_moving:
@@ -150,7 +152,6 @@ func check_stops_to_remove():
 		
 		# If we've reached the last stop, trigger auto-disembark
 		if reached_last_stop:
-			print("Reached final stop - auto-disembarking")
 			auto_disembark()
 			
 		# Check if we've reached the destination
@@ -170,12 +171,14 @@ func handle_disembark():
 			break
 	
 	if can_disembark and current_stop_resource:
-		print("Disembarking at: " + current_stop_resource.display_name)
 		var player = get_tree().get_first_node_in_group("player")
 		if player and player.has_method("start_walking"):
 			player.start_walking()
 		# Stop the parallax movement
 		is_moving = false
+		
+		if city_spawner and city_spawner.has_method("pause_spawning"):
+			city_spawner.pause_spawning()
 		
 		# Visual feedback
 		if next_stop_label:
@@ -197,7 +200,6 @@ func handle_disembark():
 			
 			if stop_index != -1:
 				TransitSystem.current_stop_index = stop_index
-				print("Updated transit system stop index to: " + str(stop_index))
 			else:
 				print("WARNING: Could not find stop in active bus line: " + current_stop_resource.display_name)
 		else:
@@ -286,7 +288,6 @@ func update_current_stop_position():
 						if TransitSystem.current_stop_index != i:
 							TransitSystem.current_stop_index = i
 							TransitSystem.current_bus_stop = current_stop_resource
-							print("Updated current stop to: " + current_stop_resource.display_name + " (index: " + str(i) + ")")
 							TransitSystem.add_visited_stop(TransitSystem.current_bus_stop)
 							
 							# Check if this is a terminus based on direction
@@ -312,11 +313,11 @@ func auto_disembark():
 	# Wait a moment to show the stop before disembarking
 	await get_tree().create_timer(2.0).timeout
 	
-	print("Auto-disembarking at end of line")
-	
 	# Stop the parallax movement
 	is_moving = false
 	
+	if city_spawner and city_spawner.has_method("pause_spawning"):
+		city_spawner.pause_spawning()
 	# Visual feedback
 	if next_stop_label:
 		next_stop_label.text = "End of line: " + TransitSystem.current_bus_stop.display_name

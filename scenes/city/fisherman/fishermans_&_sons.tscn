@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3 uid="uid://cp7monkp4sk35"]
+
+[ext_resource type="Texture2D" uid="uid://0oat8n082jqq" path="res://assets/city/fishermans_and_sons.png" id="1_1sawo"]
+
+[node name="Fishermans & Sons" type="Node2D"]
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+z_index = -10
+texture = ExtResource("1_1sawo")
