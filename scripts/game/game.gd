@@ -9,6 +9,5 @@ func _ready():
 
 func _process(_delta):
 	if Input.is_action_just_pressed("click"):  # Use just_pressed instead of is_action_pressed
-		print("click")
 		SceneTransitionManager.change_scene("bus_stop")
 	

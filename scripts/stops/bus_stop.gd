@@ -10,8 +10,8 @@ extends Node2D
 
 
 # UI elements (you'll need to add these to your scene)
-@onready var stop_name_label = $StopNameLabel
-@onready var neighborhood_label = $NeighborhoodLabel
+@onready var stop_name_label: Label = $BusStop/StopNameLabel
+@onready var neighborhood_label: Label = $BusStop/NeighborhoodLabel
 @onready var bus_stop_audio: AudioStreamPlayer2D = $BusStopAudio
 
 var active_buses = []
@@ -22,12 +22,10 @@ var current_bus_stop = null
 # Modify the _ready function in bus_stop.gd
 
 func _ready():
-	print("Bus stop scene initializing...")
 	
 	# Get current bus stop from the transit system
 	if TransitSystem.current_bus_stop:
 		current_bus_stop = TransitSystem.current_bus_stop
-		print("Current bus stop: " + current_bus_stop.display_name)
 	else:
 		print("ERROR: No current bus stop set in TransitSystem!")
 	
@@ -47,7 +45,6 @@ func _ready():
 		
 		if current_bus_stop and not current_bus_stop.connected_lines.is_empty():
 			var bus_line = current_bus_stop.connected_lines[0]
-			print("Setting initial active bus line to: " + bus_line.display_name)
 			TransitSystem.set_active_bus_line(bus_line)
 		else:
 			print("ERROR: Cannot set initial active bus line - no connected lines at this stop!")
@@ -154,9 +151,6 @@ func board_player(bus):
 		# Set the active bus line and update the stops
 		TransitSystem.set_active_bus_line(bus.bus_line)
 		
-		if bus.bus_line:
-			print("Player boarded " + bus.bus_line.display_name + " going " + 
-				  ("forward" if TransitSystem.travel_direction == 1 else "backward"))
 		
 		# Find the current stop's index in this bus line
 		var found_stop = false
@@ -164,7 +158,6 @@ func board_player(bus):
 			if TransitSystem.active_route_stops[i].display_name == current_bus_stop.display_name:
 				TransitSystem.current_stop_index = i
 				found_stop = true
-				print("Found current stop '" + current_bus_stop.display_name + "' at index " + str(i))
 				break
 		
 		if not found_stop:
@@ -175,9 +168,6 @@ func board_player(bus):
 			else:
 				TransitSystem.current_stop_index = TransitSystem.active_route_stops.size() - 1
 		
-		# Now advance to the next stop in the chosen direction
-		print("Advancing to next stop from index: " + str(TransitSystem.current_stop_index) + 
-			  " in direction: " + str(TransitSystem.travel_direction))
 		
 		TransitSystem.advance_to_next_stop()
 		print("Now at stop index: " + str(TransitSystem.current_stop_index))
@@ -196,7 +186,6 @@ func spawn_bus():
 		var random_index = randi() % current_bus_stop.connected_lines.size()
 		var bus_line = current_bus_stop.connected_lines[random_index]
 		
-		print("Selected random bus line: " + bus_line.display_name)
 		
 		# Create the bus
 		var new_bus = bus_scene.instantiate()
@@ -225,7 +214,6 @@ func spawn_bus():
 		# Add to our active buses array for tracking
 		active_buses.append(new_bus)
 		
-		print("Spawned bus for line: " + bus_line.display_name)
 	else:
 		print("No bus lines available at this stop!")
 		
@@ -238,22 +226,12 @@ func remove_bus(bus):
 	bus.queue_free()
 
 func _on_direction_button_pressed():
-	print("Direction button pressed")
-	
-	# Check the active_bus_line before toggling
-	if TransitSystem.active_bus_line:
-		print("BUS STOP: Active bus line before toggle: " + TransitSystem.active_bus_line.display_name)
-		print("BUS STOP: Has " + str(TransitSystem.active_route_stops.size()) + " stops")
+	# If there's no active bus line, try to set one from the current stop
+	if current_bus_stop and not current_bus_stop.connected_lines.is_empty():
+		var bus_line = current_bus_stop.connected_lines[0]
+		TransitSystem.set_active_bus_line(bus_line)
 	else:
-		print("BUS STOP: No active bus line before toggle! Attempting to set one...")
-		
-		# If there's no active bus line, try to set one from the current stop
-		if current_bus_stop and not current_bus_stop.connected_lines.is_empty():
-			var bus_line = current_bus_stop.connected_lines[0]
-			print("BUS STOP: Setting active bus line to: " + bus_line.display_name)
-			TransitSystem.set_active_bus_line(bus_line)
-		else:
-			print("BUS STOP: Cannot set active bus line - no connected lines at this stop")
+		print("BUS STOP: Cannot set active bus line - no connected lines at this stop")
 			
 		# Toggle direction in the TransitSystem
 	TransitSystem.toggle_direction()

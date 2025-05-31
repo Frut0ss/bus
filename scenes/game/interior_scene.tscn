@@ -1,12 +1,20 @@
-[gd_scene load_steps=10 format=3 uid="uid://cyymcyw1xak1t"]
+[gd_scene load_steps=18 format=3 uid="uid://cyymcyw1xak1t"]
 
 [ext_resource type="Script" uid="uid://c5m1a1bnl5ktb" path="res://scripts/game/interior_scene.gd" id="1_k7u6a"]
 [ext_resource type="PackedScene" uid="uid://dn73wkwif0dus" path="res://scenes/stops/moving_bus_stop.tscn" id="2_jqamq"]
-[ext_resource type="Texture2D" uid="uid://cmpk8y4mbgr0n" path="res://assets/bus_interior/BackPlan.png" id="3_6nv7a"]
-[ext_resource type="Texture2D" uid="uid://cjmx04hofkq3q" path="res://assets/bus_interior/MiddlePlan.png" id="4_gbva0"]
-[ext_resource type="Texture2D" uid="uid://coqx4hmln6ifb" path="res://assets/bus_interior/FirstPlan.png" id="5_qxpyf"]
+[ext_resource type="Texture2D" uid="uid://cmpk8y4mbgr0n" path="res://assets/bus_interior/BackPlan.png" id="3_gbva0"]
+[ext_resource type="Texture2D" uid="uid://cjmx04hofkq3q" path="res://assets/bus_interior/MiddlePlan.png" id="4_qxpyf"]
+[ext_resource type="Script" uid="uid://mgn730hiwu3r" path="res://scripts/city/city_spawner/city_spawner.gd" id="6_ipjyr"]
 [ext_resource type="Texture2D" uid="uid://c82lkv8gnwmap" path="res://assets/bus_interior/BusInterior.png" id="6_kp4u0"]
 [ext_resource type="PackedScene" uid="uid://4ngfelrrcq6c" path="res://scenes/player/character_player.tscn" id="7_836fk"]
+[ext_resource type="PackedScene" uid="uid://ogga1nb8m85a" path="res://scenes/city/georgian_house/georgian_house.tscn" id="7_kp4u0"]
+[ext_resource type="PackedScene" uid="uid://crqgkaq6sebdx" path="res://scenes/city/centra/centra.tscn" id="8_836fk"]
+[ext_resource type="PackedScene" uid="uid://cp7monkp4sk35" path="res://scenes/city/fisherman/fishermans_&_sons.tscn" id="9_okbr3"]
+[ext_resource type="PackedScene" uid="uid://fw0u7q1behjs" path="res://scenes/city/comic_books/comic_book.tscn" id="10_6q4kb"]
+[ext_resource type="Texture2D" uid="uid://r365vp7p30fn" path="res://assets/city/ground.png" id="10_gbva0"]
+[ext_resource type="PackedScene" uid="uid://y6dyl7q0a8lr" path="res://scenes/city/spar/spar.tscn" id="11_s1si1"]
+[ext_resource type="PackedScene" uid="uid://p5334i3trfb5" path="res://scenes/city/lamp_post/lamp_post.tscn" id="12_5tmus"]
+[ext_resource type="PackedScene" uid="uid://cjkq8x2kevpb3" path="res://scenes/city/tree/tree.tscn" id="12_836fk"]
 
 [sub_resource type="FontFile" id="FontFile_s2p38"]
 cache/0/1/0/ascent = 0.0
@@ -58,33 +66,27 @@ interior_bus_stop_scene = ExtResource("2_jqamq")
 [node name="ParallaxBackground" type="ParallaxBackground" parent="."]
 
 [node name="Far" type="ParallaxLayer" parent="ParallaxBackground"]
+z_index = -15
 motion_scale = Vector2(0.3, 0.3)
 motion_mirroring = Vector2(1909, 0)
 
 [node name="Sprite2D" type="Sprite2D" parent="ParallaxBackground/Far"]
-position = Vector2(956.924, 288.75)
-scale = Vector2(2.40535, 2.40535)
-texture = ExtResource("3_6nv7a")
+position = Vector2(960.281, 298.125)
+scale = Vector2(2.41049, 2.41049)
+texture = ExtResource("3_gbva0")
 
-[node name="Medium" type="ParallaxLayer" parent="ParallaxBackground"]
-motion_scale = Vector2(0.6, 0.6)
-motion_mirroring = Vector2(1925, 0)
+[node name="Mid" type="ParallaxLayer" parent="ParallaxBackground"]
+z_index = -12
+motion_scale = Vector2(0.3, 0.3)
+motion_mirroring = Vector2(1909, 0)
 
-[node name="Sprite2D" type="Sprite2D" parent="ParallaxBackground/Medium"]
-position = Vector2(1112, 645)
-scale = Vector2(2.42416, 2.42416)
-texture = ExtResource("4_gbva0")
-
-[node name="Close" type="ParallaxLayer" parent="ParallaxBackground"]
-motion_mirroring = Vector2(1920, 0)
-
-[node name="Sprite2D" type="Sprite2D" parent="ParallaxBackground/Close"]
-position = Vector2(959, 746)
-scale = Vector2(2.42803, 2.42803)
-texture = ExtResource("5_qxpyf")
+[node name="Sprite2D" type="Sprite2D" parent="ParallaxBackground/Mid"]
+position = Vector2(1113.55, 702.5)
+scale = Vector2(2.40918, 2.58146)
+texture = ExtResource("4_qxpyf")
 
 [node name="BusStopSpawner" type="Marker2D" parent="."]
-position = Vector2(-1029, 578)
+position = Vector2(-1032, 613)
 
 [node name="StopsContainer" type="Node2D" parent="."]
 
@@ -93,12 +95,14 @@ wait_time = 4.0
 autostart = true
 
 [node name="BusInterior" type="Sprite2D" parent="."]
-position = Vector2(913, 718)
-scale = Vector2(1.70606, 1.70606)
+z_index = 10
+position = Vector2(764.382, 717.187)
+scale = Vector2(1.24495, 1.24495)
 texture = ExtResource("6_kp4u0")
 
 [node name="CharacterPlayer" parent="." instance=ExtResource("7_836fk")]
-position = Vector2(1025, 871)
+z_index = 11
+position = Vector2(873, 820)
 
 [node name="NextStopLabel" type="Label" parent="."]
 offset_left = 625.0
@@ -109,3 +113,26 @@ label_settings = SubResource("LabelSettings_kjyc6")
 
 [node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
 bus = &"SFX"
+
+[node name="CitySpawner" type="Node2D" parent="."]
+position = Vector2(4, 0)
+script = ExtResource("6_ipjyr")
+georgian_houses = Array[PackedScene]([ExtResource("7_kp4u0")])
+shops = Array[PackedScene]([ExtResource("8_836fk"), ExtResource("10_6q4kb"), ExtResource("9_okbr3"), ExtResource("11_s1si1")])
+lamp_posts = Array[PackedScene]([ExtResource("12_5tmus")])
+trees = Array[PackedScene]([ExtResource("12_836fk")])
+
+[node name="CityContainer" type="Node2D" parent="CitySpawner"]
+
+[node name="BuildingSpawner" type="Marker2D" parent="CitySpawner"]
+position = Vector2(-800, 392)
+
+[node name="LampSpawner" type="Marker2D" parent="CitySpawner"]
+position = Vector2(-2000, 591)
+
+[node name="CityDespawnLine" type="Marker2D" parent="CitySpawner"]
+position = Vector2(2500, 572)
+
+[node name="ground" type="Sprite2D" parent="."]
+position = Vector2(959, 964)
+texture = ExtResource("10_gbva0")

@@ -387,7 +387,6 @@ texture = ExtResource("3_j3g3b")
 [node name="LeftLeg" type="Sprite2D" parent="Body"]
 position = Vector2(116.581, 249.06)
 rotation = -0.443638
-scale = Vector2(1, 1)
 texture = ExtResource("4_rghid")
 offset = Vector2(63.5897, 132.479)
 

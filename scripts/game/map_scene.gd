@@ -41,7 +41,7 @@ func _ready():
 	update_map_display()
 	
 	# Print debug info
-	print("Map scene initialized with " + str(stop_nodes.size()) + " stops")
+
 
 func _process(delta: float) -> void:
 	if map_view_timer and timer_label:
@@ -110,7 +110,7 @@ func setup_player_visualization():
 	player_path.end_cap_mode = Line2D.LINE_CAP_ROUND
 	player_path.antialiased = true
 	$Background.add_child(player_path)
-	print("Created player path: " + str(player_path.get_path()))
+
 	
 	# Update the player path with all visited stops from TransitSystem
 	update_player_path()
@@ -132,7 +132,6 @@ func draw_all_bus_routes():
 		var bus_line = TransitSystem.bus_lines[line_id]
 		if bus_line and bus_line.stops and bus_line.stops.size() >= 2:
 			draw_bus_route(bus_line, line_id)
-			print("Drawing route for: " + line_id)
 		else:
 			print("WARNING: Skipping route for " + line_id + " (invalid data)")
 
@@ -165,7 +164,6 @@ func draw_bus_route(bus_line, line_id):
 	# Only add the route if it has at least 2 points
 	if route_line.get_point_count() >= 2:
 		$Background.add_child(route_line)
-		print("Added route line with " + str(route_line.get_point_count()) + " points")
 	else:
 		route_line.queue_free()
 		print("WARNING: Route line had fewer than 2 points")
@@ -232,14 +230,12 @@ func update_player_path():
 				point_strings.append(stop.display_name + " at " + str(node_position))
 				player_path.add_point(node_position)
 		
-		print("Updated player path with points: " + str(point_strings))
-		print("Player path now has " + str(player_path.get_point_count()) + " points")
+
 	else:
 		print("ERROR: Tried to update player path but it doesn't exist!")
 
 # Signal handler for when the bus stop changes in the transit system
 func _on_bus_stop_changed(new_stop):
-	print("Bus stop changed to: " + new_stop.display_name)
 	
 	# Updates will be handled through TransitSystem signals
 	update_player_path()

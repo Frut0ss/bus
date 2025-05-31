@@ -84,8 +84,6 @@ func arrive_at_stop():
 	
 	# Start the stop timer
 	stop_timer.start()
-	
-	print("Bus stopped - player signaled successfully!")
 
 func _on_stop_timer_timeout() -> void:
 	# Resume movement
@@ -121,7 +119,6 @@ func _on_body_exited(body):
 func display_boarding_prompt(display):
 	if display:
 		if can_player_board():
-			print("Press E to signal the bus - " + bus_line.display_name + " " + direction_text)
 			modulate = Color(1.0, 1.0, 1.0)  # Normal color
 		else:
 			# Check why we can't board
@@ -155,11 +152,9 @@ func display_boarding_prompt(display):
 				print("Cannot board - missing bus line or current stop data")
 				modulate = Color(0.7, 0.0, 0.0, 0.8)  # Red tint
 	else:
-		print("Boarding prompt hidden")
 		modulate = Color(1.0, 1.0, 1.0)  # Reset to normal colorr
 		
 func display_bus_line(line_name):
-	print("Attempting to display line name: " + line_name)
 	line_label.text = line_name
 
 func board_player(player_node):
@@ -195,7 +190,6 @@ func board_player(player_node):
 			# Play the animation
 			player_anim.play("boarding")
 			
-			print("Playing boarding animation on player")
 
 
 func can_player_board():
@@ -234,7 +228,6 @@ func can_player_board():
 	return can_travel
 
 func _on_player_animation_finished(anim_name):
-	print("Player animation finished:", anim_name)
 	# Start the bus moving again
 	at_bus_stop = false
 	is_leaving = true

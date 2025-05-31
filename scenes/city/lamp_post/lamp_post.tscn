@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=3 uid="uid://p5334i3trfb5"]
+
+[ext_resource type="Texture2D" uid="uid://cjn826x22qu1n" path="res://assets/city/LampPost.png" id="1_ygdtj"]
+
+[node name="LampPost" type="Node2D"]
+z_index = -5
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(61.125, -114.142)
+scale = Vector2(0.66284, 0.66284)
+texture = ExtResource("1_ygdtj")
