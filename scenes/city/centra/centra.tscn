@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://crqgkaq6sebdx"]
 
-[ext_resource type="Texture2D" uid="uid://bdwu8xd1wwjf4" path="res://assets/city/centra.png" id="1_5asuo"]
+[ext_resource type="Texture2D" uid="uid://y2m717qs3ikg" path="res://assets/city/centrabackground.png" id="1_5asuo"]
 
 [node name="Centra" type="Node2D"]
 

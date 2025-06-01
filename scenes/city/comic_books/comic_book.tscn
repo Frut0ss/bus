@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://fw0u7q1behjs"]
 
-[ext_resource type="Texture2D" uid="uid://bskcm7bmwk7fs" path="res://assets/city/comic_book.png" id="1_moa0v"]
+[ext_resource type="Texture2D" uid="uid://s3xby2cynevu" path="res://assets/city/comicbookbackground.png" id="1_moa0v"]
 
 [node name="ComicBooks" type="Node2D"]
 z_index = -10

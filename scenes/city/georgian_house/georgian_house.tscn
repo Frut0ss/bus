@@ -1,10 +1,9 @@
 [gd_scene load_steps=2 format=3 uid="uid://ogga1nb8m85a"]
 
-[ext_resource type="Texture2D" uid="uid://bsakgbr1fi8hc" path="res://assets/city/GeorgianHouse.png" id="1_2l2e5"]
+[ext_resource type="Texture2D" uid="uid://cupypmmal73lb" path="res://assets/city/georgianhousebackground.png" id="1_2l2e5"]
 
 [node name="GeorgianHouse" type="Node2D"]
 z_index = -10
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-scale = Vector2(0.704598, 0.704598)
 texture = ExtResource("1_2l2e5")
