@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://cyymcyw1xak1t"]
+[gd_scene load_steps=22 format=3 uid="uid://cyymcyw1xak1t"]
 
 [ext_resource type="Script" uid="uid://c5m1a1bnl5ktb" path="res://scripts/game/interior_scene.gd" id="1_k7u6a"]
 [ext_resource type="PackedScene" uid="uid://dn73wkwif0dus" path="res://scenes/stops/moving_bus_stop.tscn" id="2_jqamq"]
@@ -12,9 +12,9 @@
 [ext_resource type="PackedScene" uid="uid://cp7monkp4sk35" path="res://scenes/city/fisherman/fishermans_&_sons.tscn" id="9_okbr3"]
 [ext_resource type="PackedScene" uid="uid://fw0u7q1behjs" path="res://scenes/city/comic_books/comic_book.tscn" id="10_6q4kb"]
 [ext_resource type="Texture2D" uid="uid://r365vp7p30fn" path="res://assets/city/ground.png" id="10_gbva0"]
-[ext_resource type="PackedScene" uid="uid://y6dyl7q0a8lr" path="res://scenes/city/spar/spar.tscn" id="11_s1si1"]
 [ext_resource type="PackedScene" uid="uid://p5334i3trfb5" path="res://scenes/city/lamp_post/lamp_post.tscn" id="12_5tmus"]
 [ext_resource type="PackedScene" uid="uid://cjkq8x2kevpb3" path="res://scenes/city/tree/tree.tscn" id="12_836fk"]
+[ext_resource type="Texture2D" uid="uid://os3vs8ol5l06" path="res://assets/bus_interior/StopButton.png" id="15_6q4kb"]
 
 [sub_resource type="FontFile" id="FontFile_s2p38"]
 cache/0/1/0/ascent = 0.0
@@ -58,6 +58,18 @@ font = SubResource("FontFile_s2p38")
 font_size = 60
 font_color = Color(0, 0, 0, 1)
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_s1si1"]
+size = Vector2(106, 71)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_6q4kb"]
+size = Vector2(27, 1281)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_5tmus"]
+size = Vector2(60, 658)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_tcwav"]
+size = Vector2(1015, 16.5)
+
 [node name="InteriorScene" type="Node2D"]
 script = ExtResource("1_k7u6a")
 scroll_speed = 600.0
@@ -96,13 +108,14 @@ autostart = true
 
 [node name="BusInterior" type="Sprite2D" parent="."]
 z_index = 10
-position = Vector2(764.382, 717.187)
-scale = Vector2(1.24495, 1.24495)
+position = Vector2(1188, 638)
+scale = Vector2(0.529756, 0.529756)
 texture = ExtResource("6_kp4u0")
 
 [node name="CharacterPlayer" parent="." instance=ExtResource("7_836fk")]
 z_index = 11
-position = Vector2(873, 820)
+position = Vector2(1240, 833)
+scale = Vector2(0.7, 0.7)
 
 [node name="NextStopLabel" type="Label" parent="."]
 offset_left = 625.0
@@ -118,14 +131,14 @@ bus = &"SFX"
 position = Vector2(4, 0)
 script = ExtResource("6_ipjyr")
 georgian_houses = Array[PackedScene]([ExtResource("7_kp4u0")])
-shops = Array[PackedScene]([ExtResource("8_836fk"), ExtResource("10_6q4kb"), ExtResource("9_okbr3"), ExtResource("11_s1si1")])
+shops = Array[PackedScene]([ExtResource("8_836fk"), ExtResource("10_6q4kb"), ExtResource("9_okbr3")])
 lamp_posts = Array[PackedScene]([ExtResource("12_5tmus")])
 trees = Array[PackedScene]([ExtResource("12_836fk")])
 
 [node name="CityContainer" type="Node2D" parent="CitySpawner"]
 
 [node name="BuildingSpawner" type="Marker2D" parent="CitySpawner"]
-position = Vector2(-800, 392)
+position = Vector2(-400, 392)
 
 [node name="LampSpawner" type="Marker2D" parent="CitySpawner"]
 position = Vector2(-2000, 591)
@@ -136,3 +149,55 @@ position = Vector2(2500, 572)
 [node name="ground" type="Sprite2D" parent="."]
 position = Vector2(959, 964)
 texture = ExtResource("10_gbva0")
+
+[node name="StopButton" type="Area2D" parent="."]
+position = Vector2(626, 800)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StopButton"]
+position = Vector2(36, -25.5)
+shape = SubResource("RectangleShape2D_s1si1")
+
+[node name="Sprite2D" type="Sprite2D" parent="StopButton"]
+z_index = 10
+position = Vector2(33, -11)
+scale = Vector2(0.459184, 0.459184)
+texture = ExtResource("15_6q4kb")
+
+[node name="InvisibleWalls" type="Node2D" parent="."]
+
+[node name="StaticBody2D" type="StaticBody2D" parent="InvisibleWalls"]
+position = Vector2(1244, 868)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="InvisibleWalls/StaticBody2D"]
+position = Vector2(-24.5, -15.5)
+rotation = 1.5708
+shape = SubResource("RectangleShape2D_6q4kb")
+
+[node name="StaticBody2D2" type="StaticBody2D" parent="InvisibleWalls"]
+position = Vector2(1244, 868)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="InvisibleWalls/StaticBody2D2"]
+position = Vector2(-45, -624)
+rotation = 1.5708
+shape = SubResource("RectangleShape2D_6q4kb")
+
+[node name="StaticBody2D3" type="StaticBody2D" parent="InvisibleWalls"]
+position = Vector2(1244, 868)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="InvisibleWalls/StaticBody2D3"]
+position = Vector2(-690, -306)
+shape = SubResource("RectangleShape2D_5tmus")
+
+[node name="StaticBody2D5" type="StaticBody2D" parent="InvisibleWalls"]
+position = Vector2(1244, 868)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="InvisibleWalls/StaticBody2D5"]
+position = Vector2(580, -294)
+shape = SubResource("RectangleShape2D_5tmus")
+
+[node name="StaticBody2D4" type="StaticBody2D" parent="InvisibleWalls"]
+position = Vector2(1244, 868)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="InvisibleWalls/StaticBody2D4"]
+position = Vector2(-150.5, -307.75)
+shape = SubResource("RectangleShape2D_tcwav")
