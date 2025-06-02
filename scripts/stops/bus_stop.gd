@@ -61,8 +61,10 @@ func _ready():
 	
 func _process(_delta):
 	# Check for signal input (E key) - only during preview
-	if Input.is_action_just_pressed("Embark") and next_bus_line and not player_has_signaled and next_bus_panel.visible:
+	if Input.is_action_just_pressed("Embark") and next_bus_line and not player_has_signaled and next_bus_panel.visible and character_player.is_on_floor():
 		signal_bus()
+		character_player.start_boarding()
+		
 	
 	# Check if any buses have reached the despawn position
 	for bus in active_buses:
@@ -144,7 +146,6 @@ func _on_bus_stop_changed(new_stop):
 func board_player(bus):
 	var player = character_player
 	if player:
-		player.start_boarding()
 		bus.board_player(player)
 		
 		# Store the bus line in TransitSystem

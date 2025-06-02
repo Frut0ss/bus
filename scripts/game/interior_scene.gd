@@ -8,12 +8,16 @@ extends Node2D
 @onready var timer: Timer = $Timer
 @onready var next_stop_label: Label = $NextStopLabel
 @onready var city_spawner: Node2D = $CitySpawner
+@onready var stop_button: Area2D = $StopButton
 
+var player_near_button = false
+var button_enabled = false
 var is_moving = true
 var time_since_last_spawn = 0.0
 var upcoming_stops = []
 var stops_spawned = 0
 var bus_stop_despawn_threshold = 2300  # X position to remove passed stops
+var stop_requested = false
 
 func _ready():
 	# Get route data from TransitSystem
@@ -96,23 +100,18 @@ func _process(delta):
 	if is_moving:
 		# Move the parallax background
 		$ParallaxBackground.scroll_offset.x += scroll_speed * delta
-		
-		## Update timer for stop spawning
-		#time_since_last_spawn += delta
-		#
-		## Check if it's time to spawn the next stop
-		#if timer and stops_spawned < upcoming_stops.size():
-			#spawn_next_stop()
-			#time_since_last_spawn = 0
 		update_current_stop_position()
-		# Check for stops that need to be removed (passed by)
 		check_stops_to_remove()
 		update_disembark_ui()
-	# Handle disembarking input
-	if Input.is_action_just_pressed("Disembark"):
-		handle_disembark()
+		
+		# Request stop when near button and press Embark
+		if Input.is_action_just_pressed("Embark") and player_near_button and not stop_requested:
+			request_stop()
 
-
+func request_stop():
+	stop_requested = true
+	update_label("Stop requested - will disembark at next stop")
+	print("Stop requested!")
 
 func spawn_next_stop():
 	if stops_spawned >= upcoming_stops.size():
@@ -133,6 +132,18 @@ func spawn_next_stop():
 	
 	stops_spawned += 1
 	print("Spawned stop: " + stop_resource.display_name)
+	
+	# If player requested stop, disembark at this stop
+	if stop_requested:
+		# Wait for stop to reach disembark position, then disembark
+		await wait_for_stop_to_reach_center(stop_instance)
+		handle_disembark(stop_resource)  # <-- Pass the specific stop resource
+		stop_requested = false
+
+func wait_for_stop_to_reach_center(stop_instance):
+	# Wait until the stop reaches the disembark zone
+	while stop_instance.position.x < 700:
+		await get_tree().process_frame
 
 func check_stops_to_remove():
 	if container:
@@ -159,18 +170,17 @@ func check_stops_to_remove():
 			# We've reached the destination!
 			GameStateManager.change_to_state(GameStateManager.GameState.GAME_WON)
 
-func handle_disembark():
-	var can_disembark = false
-	var current_stop_resource = null
+func handle_disembark(specific_stop_resource = null):
+	var current_stop_resource = specific_stop_resource
 	
-	# Find any stop in disembark range
-	for stop in get_tree().get_nodes_in_group("bus_stops"):
-		if stop.position.x > 700 and stop.position.x < 1200:
-			can_disembark = true
-			current_stop_resource = stop.stop_resource
-			break
+	# If no specific stop provided, find one in disembark range (old behavior)
+	if not current_stop_resource:
+		for stop in get_tree().get_nodes_in_group("bus_stops"):
+			if stop.position.x > 700 and stop.position.x < 1200:
+				current_stop_resource = stop.stop_resource
+				break
 	
-	if can_disembark and current_stop_resource:
+	if current_stop_resource:
 		var player = get_tree().get_first_node_in_group("player")
 		if player and player.has_method("start_walking"):
 			player.start_walking()
@@ -180,15 +190,14 @@ func handle_disembark():
 		if city_spawner and city_spawner.has_method("pause_spawning"):
 			city_spawner.pause_spawning()
 		
-		# Visual feedback
-		if next_stop_label:
-			next_stop_label.text = "Disembarking at " + current_stop_resource.display_name + "..."
+		update_label("Disembarking at " + current_stop_resource.display_name + "...")
 		
 		# Create a small delay to show the disembarking animation
 		await get_tree().create_timer(1.5).timeout
 		
 		# Update TransitSystem with our new location
 		TransitSystem.current_bus_stop = current_stop_resource
+		
 		
 		# If we have an active bus line, find this stop's index in that line
 		if TransitSystem.active_bus_line and TransitSystem.active_route_stops.size() > 0:
@@ -219,16 +228,10 @@ func _on_timer_timeout():
 		spawn_next_stop()
 
 func update_disembark_ui():
-	var can_disembark = false
-	var is_terminus_stop = false
-	var current_stop_name = ""
-	
-	# Check all bus stops in the scene
+	# Only check for terminus stops for auto-disembark
 	for stop in get_tree().get_nodes_in_group("bus_stops"):
-		# If any stop is in the disembark range (center of screen)
 		if stop.position.x > 700 and stop.position.x < 1200:
-			can_disembark = true
-			current_stop_name = stop.stop_resource.display_name
+			var current_stop_name = stop.stop_resource.display_name
 			
 			# Check if this is a terminus stop based on travel direction
 			if TransitSystem.active_route_stops.size() > 0:
@@ -245,31 +248,17 @@ func update_disembark_ui():
 				if stop.stop_resource.display_name == first_stop.display_name:
 					is_start_terminus = true
 				
-				# Determine if we should auto-disembark based on direction
-				if TransitSystem.travel_direction == 1 and is_end_terminus:
-					# Going forward and reached the end
-					is_terminus_stop = true
-					print("Reached forward terminus: " + current_stop_name)
-				elif TransitSystem.travel_direction == -1 and is_start_terminus:
-					# Going backward and reached the beginning
-					is_terminus_stop = true
-					print("Reached backward terminus: " + current_stop_name)
-			
-			if next_stop_label:
-				if is_terminus_stop:
+				# Auto-disembark at terminus
+				if (TransitSystem.travel_direction == 1 and is_end_terminus) or (TransitSystem.travel_direction == -1 and is_start_terminus):
 					var direction_name = "forward" if TransitSystem.travel_direction == 1 else "backward"
-					next_stop_label.text = "End of line (" + direction_name + "): " + current_stop_name
-					# Trigger auto-disembark
+					update_label("End of line (" + direction_name + "): " + current_stop_name)
 					call_deferred("auto_disembark")
-				else:
-					next_stop_label.text = "Press Q to disembark at " + current_stop_name
-				next_stop_label.visible = true
-			
-			break  # Only process one stop at a time
-	
-	# Hide the label if no stop is in range
-	if !can_disembark and next_stop_label:
-		next_stop_label.visible = false
+			break
+
+func update_label(text: String):
+	if next_stop_label:
+		next_stop_label.text = text
+		next_stop_label.visible = true
 
 # Add this new function to interior_scene.gd
 func update_current_stop_position():
@@ -320,7 +309,7 @@ func auto_disembark():
 		city_spawner.pause_spawning()
 	# Visual feedback
 	if next_stop_label:
-		next_stop_label.text = "End of line: " + TransitSystem.current_bus_stop.display_name
+		update_label("End of line: " + TransitSystem.current_bus_stop.display_name)
 		next_stop_label.visible = true
 	
 	# Create a small delay to show the disembarking animation
@@ -333,3 +322,11 @@ func auto_disembark():
 	else:
 		# Change scene to map view or bus stop
 		GameStateManager.change_to_state(GameStateManager.GameState.MAP_VIEW)
+
+func _on_stop_button_body_entered(body):
+	if body.is_in_group("player"):
+		player_near_button = true
+
+func _on_stop_button_body_exited(body):
+	if body.is_in_group("player"):
+		player_near_button = false
