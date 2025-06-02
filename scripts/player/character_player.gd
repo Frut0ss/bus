@@ -4,7 +4,7 @@ extends CharacterBody2D
 @onready var sprites: Node2D = $Sprites
 var sprites_scale:float = -1
 @onready var animation_player: AnimationPlayer = $AnimationPlayer
-@export var move_speed: float = 300.0
+@export var move_speed: float = 600.0
 var current_state = "idle"
 @export var jump_strength: float = -900.0
 @export var gravity: float = 980.0
@@ -16,6 +16,10 @@ func _ready():
 	play_animation("idle")
 
 func _physics_process(delta):
+	# Don't override animations if we're in a special state
+	if current_state == "boarding":
+		return
+		
 	# Add gravity
 	if not is_on_floor():
 		velocity.y += gravity * delta
@@ -23,7 +27,7 @@ func _physics_process(delta):
 	else:
 		is_on_ground = true
 	
-		# Handle jump
+	# Handle jump
 	if Input.is_action_just_pressed("jump") and is_on_floor():
 		velocity.y = jump_strength
 	
@@ -37,7 +41,6 @@ func _physics_process(delta):
 		start_walking()
 	elif is_on_ground:
 		start_idle()
-		
 
 
 
@@ -59,6 +62,7 @@ func play_animation(anim_name: String):
 
 # Call this when player boards a bus
 func start_boarding():
+	print("Started boarding animation")
 	play_animation("boarding")
 
 # Call this when player is moving between stops  

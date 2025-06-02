@@ -201,3 +201,6 @@ position = Vector2(1244, 868)
 [node name="CollisionShape2D" type="CollisionShape2D" parent="InvisibleWalls/StaticBody2D4"]
 position = Vector2(-150.5, -307.75)
 shape = SubResource("RectangleShape2D_tcwav")
+
+[connection signal="body_entered" from="StopButton" to="." method="_on_stop_button_body_entered"]
+[connection signal="body_exited" from="StopButton" to="." method="_on_stop_button_body_exited"]
