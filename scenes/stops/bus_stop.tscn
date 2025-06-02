@@ -22,27 +22,29 @@ size = Vector2(907, 20)
 [node name="BusStop" type="Node2D"]
 script = ExtResource("1_6ul46")
 
-[node name="Background" type="Sprite2D" parent="."]
+[node name="BackgroundElements" type="Node2D" parent="."]
+
+[node name="Background" type="Sprite2D" parent="BackgroundElements"]
 position = Vector2(972.635, 538.861)
 texture = ExtResource("2_5r4f1")
 
-[node name="Tree5" type="Sprite2D" parent="."]
+[node name="Tree5" type="Sprite2D" parent="BackgroundElements"]
 position = Vector2(859, 149)
 texture = ExtResource("3_y5pks")
 
-[node name="Tree3" type="Sprite2D" parent="."]
+[node name="Tree3" type="Sprite2D" parent="BackgroundElements"]
 position = Vector2(192, 177)
 texture = ExtResource("3_y5pks")
 
-[node name="Tree4" type="Sprite2D" parent="."]
+[node name="Tree4" type="Sprite2D" parent="BackgroundElements"]
 position = Vector2(1292, 214)
 texture = ExtResource("3_y5pks")
 
-[node name="Tree" type="Sprite2D" parent="."]
+[node name="Tree" type="Sprite2D" parent="BackgroundElements"]
 position = Vector2(1631, 188)
 texture = ExtResource("3_y5pks")
 
-[node name="Tree2" type="Sprite2D" parent="."]
+[node name="Tree2" type="Sprite2D" parent="BackgroundElements"]
 position = Vector2(513, 235)
 texture = ExtResource("3_y5pks")
 
@@ -126,6 +128,31 @@ shape = SubResource("RectangleShape2D_avr11")
 position = Vector2(1909, 398)
 rotation = 1.5708
 shape = SubResource("RectangleShape2D_tcfs5")
+
+[node name="NextBusPanel" type="Panel" parent="."]
+offset_left = 750.0
+offset_top = 4.0
+offset_right = 1093.0
+offset_bottom = 108.0
+
+[node name="NextBusLabel" type="Label" parent="NextBusPanel"]
+layout_mode = 0
+offset_right = 345.0
+offset_bottom = 43.0
+
+[node name="BusLineLabel" type="Label" parent="NextBusPanel"]
+layout_mode = 0
+offset_left = 1.0
+offset_top = 47.0
+offset_right = 343.0
+offset_bottom = 70.0
+
+[node name="CountdownLabel" type="Label" parent="NextBusPanel"]
+layout_mode = 0
+offset_left = 349.0
+offset_top = 5.0
+offset_right = 441.0
+offset_bottom = 102.0
 
 [connection signal="timeout" from="BusSpawnTimer" to="." method="_on_bus_spawn_timer_timeout"]
 [connection signal="timeout" from="BoardingWindowTimer" to="." method="_on_boarding_window_timer_timeout"]

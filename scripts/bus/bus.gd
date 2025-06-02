@@ -13,7 +13,7 @@ var is_leaving = false
 @onready var animation_player: AnimationPlayer = $AnimationPlayer
 @onready var direction_label: Label = $DirectionLabel
 @onready var line_label: Label = $LineLabel
-
+var is_passing_through = false
 var bus_line = null
 var direction_text = "Towards: Unknown"
 
@@ -47,8 +47,6 @@ func _process(delta):
 			player_found = true
 			if not player_in_range:
 				player_in_range = true
-				
-				# Show boarding prompt when player is in range
 				display_boarding_prompt(true)
 	
 	# Check if player was in range but is no longer found
@@ -60,19 +58,41 @@ func _process(delta):
 		# Move the bus leftward when not at a stop
 		position.x -= speed * delta
 		
-		# Check if player wants to board (signal the bus)
+		# NEW LOGIC: Only stop if the bus was signaled AND player can actually board
+		if not is_passing_through and position.x <= bus_stop_position_x and position.x >= bus_stop_position_x - 50:
+			# Check if player can actually board this bus (direction check only)
+			if can_player_board_this_bus():
+				arrive_at_stop()
+			else:
+				# Player signaled but can't board - pass through without stopping
+				print("Bus passing through - player can't board in selected direction")
+				is_passing_through = true  # Convert to passing through
+			
+	else:
+		# Bus is at stop - check for boarding input
 		if player_in_range and Input.is_action_just_pressed("Embark"):
-			# Player signaled - stop the bus
-			arrive_at_stop()
-		
-		# If bus passes the stop without being signaled, continue moving
-		if position.x < bus_stop_position_x - 200:  # Bus has passed the stop
-			# Continue to despawn position
-			pass
+			if can_player_board_this_bus():
+				# Player can board - trigger the bus stop script to handle boarding
+				# The bus stop script will call board_player() on this bus
+				pass
+			else:
+				# Player tried to board but can't - show feedback
+				show_boarding_denied_feedback()
 			
 	if player != null and is_leaving and position.x < -200:
 		is_leaving = false
 		GameStateManager.change_to_state(GameStateManager.GameState.INTERIOR_BUS)
+
+func show_boarding_denied_feedback():
+	# Visual feedback that boarding was denied
+	modulate = Color.RED
+	
+	# Flash red briefly then return to normal
+	var tween = create_tween()
+	tween.tween_property(self, "modulate", Color.WHITE, 0.5)
+	
+	# Print why they can't board (for debugging)
+	print("Boarding denied - wrong direction or at terminus")
 
 func arrive_at_stop():
 	# Snap to exact position to avoid jitter
@@ -118,7 +138,7 @@ func _on_body_exited(body):
 
 func display_boarding_prompt(display):
 	if display:
-		if can_player_board():
+		if can_player_board_this_bus():
 			modulate = Color(1.0, 1.0, 1.0)  # Normal color
 		else:
 			# Check why we can't board
@@ -192,8 +212,8 @@ func board_player(player_node):
 			
 
 
-func can_player_board():
-	if not (player_in_range and at_bus_stop and bus_line):
+func can_player_board_this_bus():
+	if not bus_line:
 		return false
 	
 	var current_stop = TransitSystem.current_bus_stop
@@ -208,24 +228,19 @@ func can_player_board():
 			break
 	
 	if current_stop_index == -1:
-		print("Current stop not found in bus line: " + bus_line.display_name)
 		return false
 	
-	# Check if we can travel in the current direction
-	var can_travel = false
+	# Check what direction THIS bus can travel from this stop
+	var bus_can_go_forward = current_stop_index < bus_line.stops.size() - 1
+	var bus_can_go_backward = current_stop_index > 0
 	
-	if TransitSystem.travel_direction == 1:
-		# Going forward - check if there are stops ahead
-		can_travel = current_stop_index < bus_line.stops.size() - 1
-	else:
-		# Going backward - check if there are stops behind
-		can_travel = current_stop_index > 0
+	# Check if this bus direction matches the player's selected direction
+	if TransitSystem.travel_direction == 1 and bus_can_go_forward:
+		return true
+	elif TransitSystem.travel_direction == -1 and bus_can_go_backward:
+		return true
 	
-	if not can_travel:
-		print("Cannot board " + bus_line.display_name + " - no stops in " + 
-			  ("forward" if TransitSystem.travel_direction == 1 else "backward") + " direction")
-	
-	return can_travel
+	return false
 
 func _on_player_animation_finished(anim_name):
 	# Start the bus moving again
